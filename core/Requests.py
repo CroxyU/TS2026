@@ -31,12 +31,24 @@ def ChangePerson(Name):
 
 
 def Answer(history):
-    response = client.chat.completions.create(
+    response1 = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
-        messages=history,
+        messages=history + "Насколько человек устал от этого развора от 1 до 100?. Выведи ответ в формате <занчение>",
         temperature=0.8,
         max_tokens=500
     )
+    if response1.choices[0].message.content < 100:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=history + f"Учти, что ты устал на {response1.choices[0].message.content}%",
+            temperature=0.8,
+            max_tokens=500
+        )
+
+    else:
+        return "Мне пора, гос-дин Эркюль, досвидания."
+
+
     
     answer = response.choices[0].message.content or ""
 
