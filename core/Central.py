@@ -1,5 +1,5 @@
 class Central():
-    def __init__(self):
+    def __init__(self, Angry, Work, Age, Name ):
         # self.Person = "Start" # Angela / Meredict / Sesil / Fillip / Elsa 
         # self.Angela = {"Angry":0, "IsWork" : True, "Age" : 38, "Name" : "Анжела"}
         # self.Meredict = {"Angry":0, "IsWork" : True, "Age" : 38, "Name" : "Мередикт"}
