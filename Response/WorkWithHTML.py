@@ -9,8 +9,6 @@ app = Flask(__name__)
 def index():
     return render_template('template.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
 
 Persons = {"Angela" : Central(0, True, 36, "Анжела"),
@@ -20,5 +18,5 @@ Persons = {"Angela" : Central(0, True, 36, "Анжела"),
            "Elsa" : Central(0, True, 46, "Эльза"), }
 
 
-
-####
+if __name__ == '__main__':
+    app.run(debug=True)

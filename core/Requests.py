@@ -22,10 +22,13 @@ def ChangePerson(Name):
         
         f"<Ответ на вопрос собеседника>;<количество процентов, на которое увеличится шкала (только число, без процентов)>"
         ),
+    
+
     readed1.close()
     readed2.close()
     readed3.close()
     return prompt
+
 
 def Answer(history):
     response = client.chat.completions.create(
@@ -34,6 +37,7 @@ def Answer(history):
         temperature=0.8,
         max_tokens=500
     )
+    
     answer = response.choices[0].message.content
 
 
