@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Пять поросят — детективная игра</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Courier New', monospace;
+            background: #0a0c12;
+            color: #ececec;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* СТРАНИЦЫ ОБУЧЕНИЯ */
+        .page-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0c12;
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .page-card {
+            background: #11161f;
+            border-radius: 2rem;
+            border: 1px solid #b8860b;
+            max-width: 750px;
+            width: 85%;
+            padding: 2rem;
+            text-align: left;
+            box-shadow: 0 25px 40px black;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .page-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+            color: #eedba7;
+            text-align: center;
+        }
+        .page-card p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 0.8rem;
+            color: #cfc9b0;
+            white-space: pre-line;
+            text-align: left;
+        }
+        .big-round-btn {
+            background: #7f6139;
+            border: none;
+            border-radius: 60px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #faf0cf;
+            cursor: pointer;
+            margin: 8px;
+            min-width: 140px;
+            transition: 0.1s;
+        }
+        .big-round-btn:hover { background: #9e7a4a; transform: scale(1.02);}
+        .double-group {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* ГЛАВНЫЙ ЭКРАН */
+        .main-game {
+            width: 1300px;
+            max-width: 95vw;
+            height: 90vh;
+            background: #11161f;
+            border-radius: 2rem;
+            margin: 2rem auto;
+            position: relative;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.7);
+            border: 1px solid #2e3a46;
+        }
+
+        .top-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            z-index: 10;
+        }
+        .round-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #1e2a32;
+            border: 1px solid #c9a87b;
+            color: #f0e6c5;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px black;
+        }
+        .round-btn:hover { background: #3a4a55; transform: scale(1.03); }
+
+        .suspects-grid {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            flex: 1;
+            align-items: center;
+        }
+        .suspect-card {
+            background: #1b212c;
+            border-radius: 2rem;
+            width: 180px;
+            padding: 1rem 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #2f3a48;
+            box-shadow: 0 8px 18px black;
+        }
+        .suspect-card.grayed {
+            filter: grayscale(0.8);
+            opacity: 0.7;
+            background: #1f242e;
+        }
+        .suspect-photo {
+            width: 100px;
+            height: 100px;
+            background: #2c3545;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            border: 2px solid #b68b40;
+        }
+        .suspect-name { font-weight: bold; font-size: 1rem; margin-bottom: 6px; color: #e2cfac; }
+        .desc-icon {
+            margin-top: 10px;
+            background: #2c353f;
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: #cfc2a0;
+        }
+
+        .verdict-fixed {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #7a2e2e;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #faf0cf;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            transition: 0.2s;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+        .verdict-fixed:hover { background: #9e3e3e; transform: translateX(-50%) scale(1.02); }
+
+        /* МОДАЛЬНЫЕ ОКНА */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-window.wide-modal {
+            max-width: 700px;
+            width: 85%;
+            max-height: 85vh;
+            min-height: 450px;
+            overflow-y: auto;
+        }
+        .modal-window {
+            background: #0f141c;
+            border-radius: 2rem;
+            border: 1px solid #b8860b;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            padding: 1.5rem;
+            box-shadow: 0 20px 30px black;
+            word-wrap: break-word;
+            color: #ececec;
+        }
+        .close-cross {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #b9aa7a;
+            z-index: 10;
+        }
+        .close-cross:hover { color: #e6c87a; }
+
+        /* ДИАЛОГОВОЕ ОКНО */
+        .dialog-window {
+            width: 700px;
+            max-width: 90vw;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            background: #0e131c;
+            border-radius: 2rem;
+            padding: 0;
+            overflow: hidden;
+        }
+        .chat-header-fixed {
+            background: #2c241a;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #eedba7;
+            border-bottom: 2px solid #c9a064;
+        }
+        .chat-header-finished {
+            background: #4a2e2e;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e6c8a3;
+            border-bottom: 2px solid #a05a5a;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #080d14;
+        }
+        .msg-user {
+            align-self: flex-end;
+            background: #2c6e2c;
+            padding: 10px 16px;
+            border-radius: 20px;
+            max-width: 80%;
+            color: #f0f7e6;
+            word-break: break-word;
+        }
+        .msg-ai {
+            align-self: flex-start;
+            background: #362812;
+            padding: 10px 16px;
+            border-radius: 20px;
+            max-width: 80%;
+            color: #f3e3be;
+            cursor: pointer;
+            user-select: text;
+            word-break: break-word;
+        }
+        .msg-ai:hover { background: #5c481f; }
+        .chat-input-row {
+            display: flex;
+            gap: 12px;
+            margin: 15px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            border: none;
+            background: #1f2a33;
+            color: #ececec;
+            font-family: monospace;
+        }
+        .chat-input-row input:disabled {
+            background: #2a2a2a;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .chat-input-row button {
+            background: #846b44;
+            border: none;
+            padding: 0 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #faf0cf;
+        }
+        .chat-input-row button:disabled {
+            background: #5a4a32;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* БОЛЬШОЕ ОКНО УЛИК */
+        .evidence-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .evidence-big-window {
+            width: 850px;
+            max-width: 90vw;
+            height: 600px;
+            background: #faf0cf;
+            border-radius: 2rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+            box-shadow: 10px 10px 0 #7f6139;
+            position: relative;
+        }
+        .evidence-header-bar {
+            background: #cbaa6b;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #a0793e;
+        }
+        .evidence-header-bar h3 {
+            color: #2c2418;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .evidence-close-btn {
+            background: #7f6139;
+            border: none;
+            font-size: 1.2rem;
+            padding: 6px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #faf0cf;
+            font-weight: bold;
+        }
+        .evidence-body-flex {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .evidence-side-tabs {
+            background: #cbaa6b;
+            width: 170px;
+            display: flex;
+            flex-direction: column;
+            padding: 1.2rem 0;
+            gap: 10px;
+            overflow-y: auto;
+            border-right: 2px solid #a0793e;
+        }
+        .evidence-tab {
+            background: #e6d5ab;
+            margin: 4px 12px;
+            padding: 10px 8px;
+            border-radius: 0 24px 24px 0;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: 0.1s;
+            border: 1px solid rgba(0,0,0,0.2);
+            color: #4a2c1a;
+        }
+        .evidence-tab.active-tab {
+            background: #ffefb9;
+            border-left: 6px solid #8b4513;
+            color: #2c1a0c;
+        }
+        .evidence-tab:hover {
+            background: #f5e6b3;
+            color: #2c1a0c;
+        }
+	.suspect-photo {
+	    width: 100px;
+	    height: 100px;
+	    background: #2c3545;
+	    border-radius: 50%;
+	    margin: 0 auto 12px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    overflow: hidden;
+	    border: 2px solid #b68b40;
+	}
+	.suspect-photo img {
+	    width: 100%;
+	    height: 100%;
+	    object-fit: cover;
+	}
+        .evidence-paper-area {
+            flex: 1;
+            padding: 1.5rem;
+            background: #fff5e0;
+            overflow-y: auto;
+            color: #3a2818;
+        }
+        .evidence-list-modal {
+            list-style: none;
+            margin-top: 15px;
+        }
+        .evidence-list-modal li {
+            background: #fef3cf;
+            margin: 10px 0;
+            padding: 10px 14px;
+            border-left: 6px solid #b37b2e;
+            word-break: break-word;
+            border-radius: 0 12px 12px 0;
+            color: #3a2818;
+            font-weight: 500;
+        }
+        .empty-evidence {
+            color: #7a6848;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .toast-notify {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2e2a1f;
+            border: 1px solid #e6bc7c;
+            color: #ffefbf;
+            padding: 12px 24px;
+            border-radius: 60px;
+            z-index: 11000;
+            font-weight: bold;
+            box-shadow: 0 5px 15px black;
+            animation: fadeOut 2s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0);}
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
+        }
+        .fullscreen-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #1f1a0c, #000000);
+            z-index: 20000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #e6c384;
+        }
+        .final-buttons {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+        .final-btn {
+            background: #846b44;
+            border: none;
+            padding: 14px 34px;
+            font-size: 1.2rem;
+            border-radius: 60px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #faf0cf;
+            transition: 0.1s;
+        }
+        .final-btn:hover { background: #a07e52; transform: scale(1.02); }
+        
+        .modal-window h3 {
+            color: #eedba7;
+            margin-bottom: 0.9rem;
+        }
+        .modal-window p {
+            color: #cfc9b0;
+            line-height: 1.3;
+        }
+        select, option {
+            background: #2a2f38;
+            color: #eedba7;
+        }
+    </style>
+</head>
+<body>
+<div id="appRoot"></div>
+
+<script>
+    const openingLines = [
+        "Филип Блейк: Я был лучшим другом Эмиаса... Задавайте вопросы, я готов отвечать.",
+        "Мередит Блейк: Я редко говорю, но сегодня расскажу правду.",
+        "Эльза Гриер: Вы думаете, я убийца? Спрашивайте. Я ничего не скрываю.",
+        "Сесилия Уильямс: Как гувернантка я многое видела. Готова свидетельствовать.",
+        "Анджела Уоррен: Меня всегда подозревали... Но я скажу, что знаю."
+    ];
+
+const suspects = [
+    { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
+    { id: 1, name: "Мередит Блейк", photo: "мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
+    { id: 2, name: "Эльза Гриер", photo: "Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
+    { id: 3, name: "Сесилия Уильямс", photo: "сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
+    { id: 4, name: "Анджела Уоррен", photo: "анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
+];
+
+    let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
+    let currentModal = null;
+    let gameInitialized = false;
+    const app = document.getElementById('appRoot');
+
+    function showToast(msg) {
+        const t = document.createElement('div');
+        t.className = 'toast-notify';
+        t.innerText = msg;
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2000);
+    }
+
+    function closeModal() {
+        if (currentModal) {
+            currentModal.remove();
+            currentModal = null;
+        }
+    }
+
+    function showModal(html, className = '', addCloseCross = true) {
+        if (currentModal) closeModal();
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        const modalDiv = document.createElement('div');
+        modalDiv.className = `modal-window ${className}`;
+        let closeHtml = '';
+        if (addCloseCross) closeHtml = '<div class="close-cross" id="genericCloseBtn">✖</div>';
+        modalDiv.innerHTML = closeHtml + html;
+        overlay.appendChild(modalDiv);
+        document.body.appendChild(overlay);
+        currentModal = overlay;
+        if (addCloseCross) {
+            const closeBtn = modalDiv.querySelector('#genericCloseBtn');
+            if (closeBtn) closeBtn.onclick = () => closeModal();
+            overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+        }
+        return modalDiv;
+    }
+
+    function showCharacterDescription(s) {
+    showModal(`
+        <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
+            <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; background:#2c323f;">
+                <img src="${s.photo}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div><h2 style="color:#eedba7;">${s.name}</h2></div>
+        </div>
+        <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
+    `);
+}
+
+    function makeEvidenceSelectable(container, suspectId) {
+        if (!container) return;
+        const aiMessages = container.querySelectorAll('.msg-ai');
+        aiMessages.forEach(msg => {
+            if (msg.hasListener) return;
+            msg.addEventListener('mouseup', () => {
+                const selection = window.getSelection();
+                const selected = selection.toString().trim();
+                if (selected.length > 0) {
+                    if (!evidenceMap[suspectId]) evidenceMap[suspectId] = [];
+                    evidenceMap[suspectId].push(`🔍 "${selected}"`);
+                    showToast(`Улика добавлена для ${suspects.find(s=>s.id===suspectId).name}`);
+                    selection.removeAllRanges();
+                }
+            });
+            msg.hasListener = true;
+        });
+    }
+
+    function openDialog(suspect) {
+        if (!gameInitialized) { showToast("Сначала пройдите обучение"); return; }
+        renderChatModal(suspect);
+    }
+
+    function renderChatModal(suspect) {
+        if (suspect.finished) {
+            showFinishedDialog(suspect);
+            return;
+        }
+        
+        if (suspect.history.length === 0) {
+            suspect.history.push({ sender: 'ai', text: suspect.opening });
+        }
+        const historyHtml = suspect.history.map(msg => {
+            if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
+            else return `<div class="msg-ai">${escapeHtml(msg.text)}</div>`;
+        }).join('');
+
+        const modalDiv = showModal(`
+            <div class="chat-header-fixed">🕵️ Допрос: ${suspect.name}</div>
+            <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
+            <div class="chat-input-row">
+                <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
+                <button id="sendMsgBtn">📩 Отправить</button>
+            </div>
+        `, 'dialog-window', false);
+
+        const inputField = modalDiv.querySelector('#chatMsgInput');
+        const sendBtn = modalDiv.querySelector('#sendMsgBtn');
+        const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
+        function scrollToBottom() { msgContainer.scrollTop = msgContainer.scrollHeight; }
+        makeEvidenceSelectable(msgContainer, suspect.id);
+
+        function addUserMessage(text) {
+            if (!text.trim()) return;
+            if (suspect.msgCount >= suspect.dialogLimit) {
+                suspect.finished = true;
+                closeModal();
+                showFinishedDialog(suspect);
+                updateMainUI();
+                showToast(`Допрос ${suspect.name} завершён!`);
+                return;
+            }
+            suspect.history.push({ sender: 'user', text: text });
+            suspect.msgCount++;
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg-user';
+            userDiv.innerText = text;
+            msgContainer.appendChild(userDiv);
+            
+            const replies = [
+                "Я видел, как Эльза выходила из мастерской той ночью...", "Кэролайн была нежна, но эмоции зашкаливали.",
+                "Болиголов? Я слышал, его можно спутать с петрушкой.", "Возможно, убийца хотел подставить жену.",
+                "Проверьте кружку для пива, там был странный привкус.", "Я солгал на суде, но только чтобы защитить честь семьи.",
+                "Эльза Гриер имела сильный мотив.", "Анджела была рядом с ядом? Не верю.", "Эмиас собирался бросить Эльзу.",
+                "У неё были алиби, но слишком гладкое.", "В ту ночь кто-то плакал в саду.", "Истина где-то рядом."
+            ];
+            const reply = replies[Math.floor(Math.random() * replies.length)];
+            suspect.history.push({ sender: 'ai', text: reply });
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'msg-ai';
+            aiDiv.innerText = reply;
+            aiDiv.addEventListener('mouseup', () => {
+                const selected = window.getSelection().toString().trim();
+                if (selected) {
+                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                    showToast(`Улика добавлена для ${suspect.name}`);
+                    window.getSelection().removeAllRanges();
+                }
+            });
+            msgContainer.appendChild(aiDiv);
+            scrollToBottom();
+            makeEvidenceSelectable(msgContainer, suspect.id);
+            
+            if (suspect.msgCount >= suspect.dialogLimit) {
+                suspect.finished = true;
+                closeModal();
+                showFinishedDialog(suspect);
+                updateMainUI();
+                showToast(`Допрос ${suspect.name} завершён!`);
+            }
+            inputField.value = '';
+        }
+        
+        sendBtn.onclick = () => { const txt = inputField.value.trim(); if (txt) addUserMessage(txt); };
+        inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') addUserMessage(inputField.value.trim()); });
+        scrollToBottom();
+    }
+    
+    function showFinishedDialog(suspect) {
+        const historyHtml = suspect.history.map(msg => {
+            if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
+            else return `<div class="msg-ai" style="cursor:pointer;">${escapeHtml(msg.text)}</div>`;
+        }).join('');
+        
+        const modalDiv = showModal(`
+            <div class="chat-header-finished">🔒 Допрос ${suspect.name} завершён 🔒</div>
+            <div class="chat-messages" id="finishedMessages">${historyHtml || '<div>Нет сообщений</div>'}</div>
+            <div class="chat-input-row">
+                <input type="text" placeholder="Диалог завершён, только просмотр" disabled>
+                <button disabled style="opacity:0.5;">📩</button>
+            </div>
+            <div style="text-align:center; padding:8px; font-size:0.8rem; color:#aa9466;">Выделите текст, чтобы добавить улику</div>
+        `, 'dialog-window', true);
+        
+        const container = modalDiv.querySelector('.chat-messages');
+        if (container) {
+            const msgs = container.querySelectorAll('.msg-ai');
+            msgs.forEach(msg => {
+                msg.addEventListener('mouseup', () => {
+                    const selected = window.getSelection().toString().trim();
+                    if (selected) {
+                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                        showToast(`Улика добавлена для ${suspect.name} (из истории)`);
+                        window.getSelection().removeAllRanges();
+                    }
+                });
+            });
+        }
+    }
+    
+    let evidenceWindowOpen = false;
+    function openEvidenceWindow() {
+        if (!gameInitialized) { showToast("Игра не начата."); return; }
+        if (evidenceWindowOpen) return;
+        evidenceWindowOpen = true;
+        
+        let activeId = 0;
+        function renderEvidenceList(suspectId) {
+            const listContainer = document.getElementById('evidenceListModal');
+            if (!listContainer) return;
+            const evs = evidenceMap[suspectId] || [];
+            if (evs.length === 0) {
+                listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
+                return;
+            }
+            listContainer.innerHTML = evs.map(ev => `<li>${escapeHtml(ev)}</li>`).join('');
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'evidence-modal-overlay';
+        overlay.innerHTML = `
+            <div class="evidence-big-window">
+                <div class="evidence-header-bar">
+                    <h3>📓 БЛОКНОТ УЛИК</h3>
+                    <button class="evidence-close-btn" id="closeEvidenceBtn">✖ ЗАКРЫТЬ</button>
+                </div>
+                <div class="evidence-body-flex">
+                    <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
+                    <div class="evidence-paper-area">
+                        <ul class="evidence-list-modal" id="evidenceListModal"></ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
+        suspects.forEach(s => {
+            const tab = document.createElement('div');
+            tab.className = 'evidence-tab';
+            tab.dataset.id = s.id;
+            tab.innerText = `📌 ${s.name}`;
+            tabsContainer.appendChild(tab);
+        });
+        
+        renderEvidenceList(0);
+        
+        const tabs = overlay.querySelectorAll('.evidence-tab');
+        function setActiveTab(id) {
+            tabs.forEach(t => {
+                const tid = parseInt(t.dataset.id);
+                if (tid === id) t.classList.add('active-tab');
+                else t.classList.remove('active-tab');
+            });
+        }
+        tabs.forEach(tab => {
+            tab.onclick = () => {
+                const id = parseInt(tab.dataset.id);
+                activeId = id;
+                renderEvidenceList(id);
+                setActiveTab(id);
+            };
+        });
+        setActiveTab(0);
+        
+        overlay.querySelector('#closeEvidenceBtn').onclick = () => {
+            overlay.remove();
+            evidenceWindowOpen = false;
+        };
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
+    }
+    
+    function openVerdictModal() {
+        const allFinished = suspects.every(s => s.finished === true);
+        if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
+        const modalDiv = showModal(`
+            <h3>⚖️ ВЫНЕСЕНИЕ ПРИГОВОРА</h3>
+            <p>Вы собрали улики и допросили всех. Кто убийца?</p>
+            <select id="killerSelect" style="width:100%; padding:12px; margin:15px 0; background:#2a2f38; color:#eedba7; border-radius:40px;">
+                <option value="Филип Блейк">Филип Блейк</option>
+                <option value="Мередит Блейк">Мередит Блейк</option>
+                <option value="Эльза Гриер"> Эльза Гриер</option>
+                <option value="Сесилия Уильямс">Сесилия Уильямс</option>
+                <option value="Анджела Уоррен">Анджела Уоррен</option>
+            </select>
+            <button id="confirmVerdictBtn" style="background:#9e6b3e; padding:12px; width:100%; border-radius:60px; color:#faf0cf;">ОБВИНИТЬ</button>
+        `);
+        
+        const confirmBtn = modalDiv.querySelector('#confirmVerdictBtn');
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        
+        newConfirmBtn.onclick = () => {
+            const selected = modalDiv.querySelector('#killerSelect').value;
+            closeModal();
+            const fsDiv = document.createElement('div');
+            fsDiv.className = 'fullscreen-message';
+            if (selected === "Эльза Гриер") {
+                fsDiv.innerHTML = `
+                    <div style="background:#000000aa; padding:2rem; border-radius:50px; max-width:90%;">
+                        🔪 ИСТИННЫЙ УБИЙЦА — ЭЛЬЗА ГРИЕР<br>
+                        Она отравила Эмиаса из ревности и мести.<br>
+                        ✅ ВЫ ОБВИНИЛИ ПРАВИЛЬНО!
+                        <div class="final-buttons">
+                            <button id="restartFromFinalBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
+                        </div>
+                    </div>
+                `;
+                const restartBtn = fsDiv.querySelector('#restartFromFinalBtn');
+                if (restartBtn) restartBtn.onclick = () => location.reload();
+            } else {
+                fsDiv.innerHTML = `
+                    <div style="background:#2a1a1a; padding:2rem; border-radius:50px; max-width:90%;">
+                        ❌ ВЫ ОБВИНИЛИ НЕВИНОВНОГО<br>
+                        <span style="font-size:1rem;">Правда ещё не раскрыта...</span>
+                        <div class="final-buttons">
+                            <button id="revealBtn" class="final-btn">🔍 РАСКРЫТЬ УБИЙЦУ</button>
+                            <button id="restartFromFinalBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
+                        </div>
+                    </div>
+                `;
+                const revealBtn = fsDiv.querySelector('#revealBtn');
+                const restartBtn = fsDiv.querySelector('#restartFromFinalBtn');
+                if (revealBtn) {
+                    revealBtn.onclick = () => {
+                        fsDiv.innerHTML = `
+                            <div style="background:#000000aa; padding:2rem; border-radius:50px; max-width:90%;">
+                                🔪 ИСТИННЫЙ УБИЙЦА — ЭЛЬЗА ГРИЕР<br>
+                                Она отравила Эмиаса из ревности и мести.
+                                <div class="final-buttons">
+                                    <button id="restartGameBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
+                                </div>
+                            </div>
+                        `;
+                        const restartGameBtn = fsDiv.querySelector('#restartGameBtn');
+                        if (restartGameBtn) restartGameBtn.onclick = () => location.reload();
+                    };
+                }
+                if (restartBtn) restartBtn.onclick = () => location.reload();
+            }
+            document.body.appendChild(fsDiv);
+        };
+    }
+    
+    function updateMainUI() {
+        const cards = document.querySelectorAll('.suspect-card');
+        suspects.forEach((s, i) => { if (s.finished && cards[i]) cards[i].classList.add('grayed'); });
+    }
+    function renderMainScreen() {
+        const mainDiv = document.createElement('div');
+        mainDiv.className = 'main-game';
+        mainDiv.innerHTML = `
+            <div class="top-panel">
+                <div style="display:flex; gap:15px;"><div class="round-btn" id="rulesIconBtn">📜</div><div class="round-btn" id="synopsisIconBtn">📖</div></div>
+                <div class="round-btn" id="evidenceGlobalBtn">🔍</div>
+            </div>
+            <div class="suspects-grid" id="mainSuspectGrid"></div>
+        `;
+        app.innerHTML = ''; app.appendChild(mainDiv);
+        const grid = mainDiv.querySelector('#mainSuspectGrid');
+        suspects.forEach(s => {
+            const card = document.createElement('div');
+            card.className = `suspect-card ${s.finished ? 'grayed' : ''}`;
+           card.innerHTML = `<div class="suspect-photo"><img src="${s.photo}" alt="${s.name}"></div><div class="suspect-name">${s.name}</div><div class="desc-icon">📄 описание</div>`;
+            card.querySelector('.desc-icon').onclick = (e) => { e.stopPropagation(); showCharacterDescription(s); };
+            card.onclick = () => openDialog(s);
+            grid.appendChild(card);
+        });
+        document.getElementById('rulesIconBtn').onclick = () => showModal(`<h3>📜 Правила</h3><p>Каждый подозреваемый ответит на вопросы. Выделяйте фрагменты ответов для улик. После допроса всех — кнопка приговора.</p>`,'wide-modal');
+        document.getElementById('synopsisIconBtn').onclick = () => showModal(`<h3>📖 Сюжет</h3><p>Художник Эмиас Крейл отравлен. Жена осуждена. Вы допрашиваете пятерых свидетелей. Кто убийца?</p>`);
+        document.getElementById('evidenceGlobalBtn').onclick = () => openEvidenceWindow();
+        
+        const existing = document.querySelector('.verdict-fixed');
+        if (existing) existing.remove();
+        const vBtn = document.createElement('button');
+        vBtn.innerText = '⚖️ СОВЕРШИТЬ ПРИГОВОР ⚖️';
+        vBtn.className = 'verdict-fixed';
+        vBtn.onclick = () => openVerdictModal();
+        document.body.appendChild(vBtn);
+    }
+    
+    function startOnboarding() {
+        const page = document.createElement('div');
+        page.className = 'page-overlay';
+        page.innerHTML = `
+            <div class="page-card">
+                <h2>🔍 ПЯТЬ ПОРОСЯТ</h2>
+                <div style="display: flex; justify-content: center;">
+                    <button id="beginBtn" class="big-round-btn">НАЧАТЬ РАССЛЕДОВАНИЕ</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(page);
+        page.querySelector('#beginBtn').onclick = () => { page.remove(); showSynopsisPage(); };
+    }
+    
+    function showSynopsisPage() {
+        const page = document.createElement('div');
+        page.className = 'page-overlay';
+        page.innerHTML = `
+            <div class="page-card">
+                <h2>📖 КРАТКОЕ СОДЕРЖАНИЕ</h2>
+                <p>Уважаемый месье Пуаро,
+В нашем городе 16 лет назад произошло убийство. При расследовании обвинили мою мать. Но я знаю: она не виновна.
+Я была совсем ребёнком, когда её забрали. Меня отправили в чужую страну, я жила под чужой фамилией и долгие годы даже не знала правды. А когда узнала — мир рухнул. Мою маму, ласковую и тихую женщину, назвали отравительницей. Она не дожила до оправдания — умерла в тюрьме через год.
+Перед смертью она написала мне письмо. Месье Пуаро, она клялась, что не убивала. Умирающий человек не лжёт своей дочери. Я чувствую это сердцем.
+Теперь я выросла. Я люблю и хочу замуж, хочу детей. Но я не могу начать новую жизнь, пока на моей матери остаётся это пятно. Я не могу произносить своё настоящее имя, не содрогаясь от стыда и боли.
+Я молю Вас, снимите с неё эту вину. Докажите то, во что я верю всем существом. Верните мне честь моей матери, чтобы я могла жить без этой тени.
+Пожалуйста. Вы — моя последняя надежда.
+Карла Лемаршан</p>
+                <div class="double-group"><button id="nextSynopsisBtn" class="big-round-btn">ДАЛЕЕ →</button></div>
+            </div>
+        `;
+        document.body.appendChild(page);
+        page.querySelector('#nextSynopsisBtn').onclick = () => { page.remove(); showRulesPage(); };
+    }
+    
+    function showRulesPage() {
+        const page = document.createElement('div');
+        page.className = 'page-overlay';
+        page.innerHTML = `
+            <div class="page-card">
+                <h2>📜 ПРАВИЛА ИГРЫ</h2>
+                <p><strong>Англия, 1937 год. Вы — Эркюль Пуаро.</strong> Шестнадцать лет назад в поместье Олдербери был отравлен художник Эмиас Крейл. Его жена осуждена и мертва. Но её дочь просит вас найти настоящего убийцу.
+<strong>Как вести расследование:</strong>
+1. Перед вами пять подозреваемых. Вы можете задавать вопросы по очереди каждому из них.
+2. Количество вопросов ограничено. Тратьте их с умом.
+3. Если в ответе подозреваемого вы заметили улику — выделите её мышкой. Это поможет вам не упустить деталь.
+4. Главное правило: вы не можете назвать убийцу, пока не опросите всех пятерых. Никаких приговоров до последнего слова.
+5. Когда вопросы закончены, а все голоса выслушаны — произнесите одно имя. Это будет ваш вердикт.
+Удачи, месье Пуаро. И пусть ваши серые клеточки не подведут.</p>
+                <div class="double-group"><button id="backSynopsisBtn" class="big-round-btn" style="background:#5f4a2e;">◀ НАЗАД</button><button id="startGameBtn" class="big-round-btn">▶ НАЧАТЬ ИГРУ</button></div>
+            </div>
+        `;
+        document.body.appendChild(page);
+        page.querySelector('#backSynopsisBtn').onclick = () => { page.remove(); showSynopsisPage(); };
+        page.querySelector('#startGameBtn').onclick = () => { page.remove(); gameInitialized = true; renderMainScreen(); };
+    }
+    
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    
+    startOnboarding();
+</script>
+</body>
+</html>
