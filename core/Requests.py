@@ -27,5 +27,16 @@ def ChangePerson(Name):
     readed3.close()
     return prompt
 
-    def Answer(user_question):
-        
+def Answer(history):
+    response = client.chat.completions.create(
+        model="llama-3.1-70b-versatile",
+        messages=history,
+        temperature=0.8,
+        max_tokens=500
+    )
+    answer = response.choices[0].message.content
+
+
+    return answer
+
+
