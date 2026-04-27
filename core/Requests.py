@@ -4,26 +4,21 @@ from groq import Groq
 client = Groq(
     api_key=GROQ_API_KEY
 )
-Ages  = {"Angela":36,"Meredict":46,"Sesil":56, "Fillip":46, "Elsa":46,}
 
 
 def ChangePerson(Name):
-    with open(f"Docs/{Name} - Описание.txt", "r", encoding="utf-8") as f_desc, \
-         open(f"Docs/{Name} - Внутренняя информация.txt", "r", encoding="utf-8") as f_inner, \
-         open(f"Docs/{Name} - Воспоминания.txt", "r", encoding="utf-8") as f_mem:
+    with open(f"Docs/{Name} - PRESS.txt", "r", encoding="utf-8") as f:
 
-        desc = f_desc.read().strip()
-        inner = f_inner.read().strip()
-        mem = f_mem.read().strip()
+        f = f.read().strip()
 
-    prompt = (
-        f"Ты — {Name}, {Ages[Name]} лет. {desc}\n"
-        f"Твоё отношение к другим: {inner}\n"
-        f"Твои воспоминания о моменте убийства: {mem}\n\n"
-        "Ты участвуешь в допросе. Отвечай от первого лица, в характере. "
-        "Можешь врать, уклоняться, нервничать. Не ломай четвёртую стену. "
-        "Не противоречь своим предыдущим ответам. Отвечай кратко и по существу."
-    )
+        prompt = (
+            "Ты участвуешь в допросе. Отвечай от первого лица, в характере. "
+            "Можешь врать, уклоняться, нервничать. Не ломай четвёртую стену. "
+            "Не противоречь своим предыдущим ответам. Отвечай кратко и по существу."
+            "С момента совершения преступления прошло 16 лет. "
+            "Из-за этого ты будешь плохо врать и скрывать"
+            f"Вся информация о тебе: {f}"
+        )
     return prompt
 
 
