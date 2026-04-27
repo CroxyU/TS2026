@@ -4,14 +4,15 @@ from core.Requests import Answer
 from core.Requests import ChangePerson
 
 def Work(Name, Quetion):
-    Persons[Name].ConversationHistory.append(Quetion)
-    if Persons[Name].IsActive:
-        Ans = Answer(Persons[Name].ConversationHistory)
-        Persons[Name].ConversationHistory.append(Ans)
+    P = Persons[Name]
+    P.ConversationHistory.append(Quetion)
+    if P.IsActive:
+        Ans = Answer(P.ConversationHistory)
+        P.ConversationHistory.append(Ans)
         
-    elif not Persons[Name].IsActive:
-            Persons[Name].ConversationHistory.append(ChangePerson(Name))
-            Ans = Answer(Persons[Name].ConversationHistory)
-            Persons[Name].ConversationHistory.append(Ans)
+    elif not P.IsActive:
+            P.ConversationHistory.append(ChangePerson(Name))
+            Ans = Answer(P.ConversationHistory)
+            P.ConversationHistory.append(Ans)
     return Ans 
     
