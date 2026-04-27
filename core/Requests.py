@@ -35,10 +35,10 @@ def Answer(history):
         model="llama-3.3-70b-versatile",
         messages=history,
         temperature=0.8,
-        max_tokens=500
+        max_tokens=3000
     )
     
-    answer = response.choices[0].message.content
+    answer = response.choices[0].message.content or ""
 
     return answer
 
