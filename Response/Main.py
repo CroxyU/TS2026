@@ -8,18 +8,14 @@ def Work(Name, Question):
     if P.IsActive:
         P.ConversationHistory.append({"role": "user", "content": Question})
         Ans = Answer(P.ConversationHistory)
-        Ans, Ang = Ans.split(";") 
-        P.Angry += int(Ang)
         P.ConversationHistory.append({"role": "assistant", "content": Ans})
 
     else:
             P.ConversationHistory.append({"role": "system", "content": ChangePerson(Name)})
             P.ConversationHistory.append({"role": "user", "content": Question})
             Ans = Answer(P.ConversationHistory)
-            Ans, Ang = Ans.split(";")
-            P.Angry += int(Ang)
             P.ConversationHistory.append({"role": "assistant", "content": Ans})
             
     return Ans 
     
-print(Work("Elsa", "Не помните ли вы пропропро, что вы делали в тот день?"))
+print(f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}", f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}")
