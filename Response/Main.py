@@ -10,8 +10,8 @@ def Work(Name, Quetion):
         Ans = Answer(P.ConversationHistory)
         P.ConversationHistory.append(Ans)
         
-    elif not Pe.IsActive:
-            Pe.ConversationHistory.append(ChangePerson(Name))
+    elif not P.IsActive:
+            P.ConversationHistory.append(ChangePerson(Name))
             Ans = Answer(P.ConversationHistory)
             P.ConversationHistory.append(Ans)
     return Ans 
