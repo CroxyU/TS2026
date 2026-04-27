@@ -669,14 +669,7 @@ const suspects = [
             userDiv.innerText = text;
             msgContainer.appendChild(userDiv);
             
-            const replies = [
-                "Я видел, как Эльза выходила из мастерской той ночью...", "Кэролайн была нежна, но эмоции зашкаливали.",
-                "Болиголов? Я слышал, его можно спутать с петрушкой.", "Возможно, убийца хотел подставить жену.",
-                "Проверьте кружку для пива, там был странный привкус.", "Я солгал на суде, но только чтобы защитить честь семьи.",
-                "Эльза Гриер имела сильный мотив.", "Анджела была рядом с ядом? Не верю.", "Эмиас собирался бросить Эльзу.",
-                "У неё были алиби, но слишком гладкое.", "В ту ночь кто-то плакал в саду.", "Истина где-то рядом."
-            ];
-            const reply = replies[Math.floor(Math.random() * replies.length)];
+            const reply = Reply(Name, Qestion);
             suspect.history.push({ sender: 'ai', text: reply });
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg-ai';

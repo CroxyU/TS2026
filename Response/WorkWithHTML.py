@@ -1,5 +1,6 @@
 from core.Central import Central
 from core.Requests import *
+from Response.Main import *
 
 from flask import Flask, render_template
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('template.html')
+    return render_template('template.html', Reply = Work(request.args.get("Name", default=None, type=None), request.args.get(Name, default=None, type=None)))
 
 
 
