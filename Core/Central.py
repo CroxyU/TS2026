@@ -6,5 +6,11 @@ class Central():
         self.SesilAngry = 0
         self.FillipAngry = 0
         self.ElsaAngry = 0
+
+        self.AngelaAge = 46
+        self.MeredictAge = 46
+        self.SesilAge = 46
+        self.FillipAge = 46
+        self.ElsaAge = 46
             
 
