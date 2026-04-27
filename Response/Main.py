@@ -8,12 +8,16 @@ def Work(Name, Question):
     if P.IsActive:
         P.ConversationHistory.append({"role": "user", "content": Question})
         Ans = Answer(P.ConversationHistory)
+        Ans, Ang = str(Ans).split(";")
+        P.Angry += int(Ang)
         P.ConversationHistory.append({"role": "assistant", "content": Ans})
 
     else:
             P.ConversationHistory.append({"role": "system", "content": ChangePerson(Name)})
             P.ConversationHistory.append({"role": "user", "content": Question})
             Ans = Answer(P.ConversationHistory)
+            Ans, Ang = str(Ans).split(";")
+            P.Angry += int(Ang)
             P.ConversationHistory.append({"role": "assistant", "content": Ans})
             
     return Ans 
