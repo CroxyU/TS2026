@@ -906,7 +906,7 @@ body ::-webkit-scrollbar-thumb:hover {
                 return;
             }
 
-            fetch('/ask', {
+            fetch('https://ts2026-4e3b.onrender.com/ask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: serverName, question: text })
