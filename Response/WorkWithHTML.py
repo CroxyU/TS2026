@@ -1,27 +1,10 @@
-import sys
-import os
-# Добавляем путь к корневой папке TS2026
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Теперь импорты работают
-from core.Central import Central
-from core.Requests import *
-
-from flask import Flask, render_template, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return render_template('template.html')
-
 
 NAMES = {"Филип Блейк":"Fillip", "Мередит Блейк": "Meredict", "Эльза Гриер" : "Elsa", "Сесилия Уильямс": "Sesil", "Анджела Уоррен": "Angela", "Angela":"Angela", "Sesil":"Sesil", "Elsa": "Elsa" ,"Meredict":"Meredict","Fillip":"Fillip"} 
-Persons = {"Angela" : Central(0, True, 36, "Анжела"),
-           "Meredict" : Central(0, True, 46, "Мередикт"),
-           "Sesil" : Central(0, True, 56, "Сесиль"),
-           "Fillip" : Central(0, True, 46, "Филип"),
-           "Elsa" : Central(0, True, 46, "Эльза"), }
+Persons = {"Angela" : Central(0, True, 36, "Анжела", ["Месье Пуаро, я ждала этого дня шестнадцать лет. Спрашивайте всё, что хотите. Я устала молчать."]),
+           "Meredict" : Central(0, True, 46, "Мередикт", ["О… это очень тяжело. Я до сих пор виню себя за те разговоры о цикуте. Но если моя память поможет Карле… я постараюсь. Извините, я волнуюсь."]),
+           "Sesil" : Central(0, True, 56, "Сесиль", ["Я не понимаю, зачем ворошить прошлое. Но если вы хотите знать правду — что ж, я всегда смотрела ей в глаза."]),
+           "Fillip" : Central(0, True, 46, "Филип", ["Месье Пуаро, я уже всё рассказал полиции тогда. Но если вам хочется покопаться в старых костях — ради бога. Только боюсь, вы зря теряете время."]),
+           "Elsa" : Central(0, True, 46, "Эльза", ["Эмиас — моя единственная любовь. Вы правда думаете, что я могла его убить? Впрочем… задавайте свои вопросы."]), }
 
 @app.route('/ask', methods=['POST'])
 def ask():
@@ -38,9 +21,7 @@ def ask():
     try:
         if not person.IsActive:
             system_prompt = ChangePerson(NAMES[name], person=person)
-            person.ConversationHistory = [{"role": "system", "content": system_prompt}]
-            greeting = f"Добрый день. Я {name}. Задавайте вопросы."
-            person.ConversationHistory.append({"role": "assistant", "content": greeting})
+            person.ConversationHistory.insert(0, {"role": "system", "content": system_prompt})
             person.IsActive = True
 
         person.ConversationHistory.append({"role": "user", "content": question})
@@ -53,6 +34,7 @@ def ask():
         Angr = Fatigue(history2, person)
         print(Angr)
         person.Angry += int(Angr)  
+        data.set("Angry", person.Angry)
         print(f"Текущий уровень злости {name}: {person.Angry}")
 
 
@@ -64,16 +46,7 @@ def ask():
         return jsonify({'answer': answer})
     except Exception as e:
         return jsonify({'error': f'Ошибка сервера: {str(e)}'}), 500
-@app.route('/angry', methods=['POST'])
-def angry():
-    data = request.get_json()
-    name = data.get('name')
-    if not NAMES[name]:
-        return jsonify({'error': 'Не указано имя'}), 400
-    if NAMES[name] not in Persons:
-        return jsonify({'error': 'Персонаж не найден'}), 404
 
-    person = Persons[name]
-    return jsonify({'angry': person.Angry})
 if __name__ == '__main__':
     app.run(debug=True)
+
