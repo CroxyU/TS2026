@@ -583,11 +583,11 @@
     ];
 	/*карточки персонажей*/
     const suspects = [
-        { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
-        { id: 1, name: "Мередит Блейк", photo: "мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
-        { id: 2, name: "Эльза Гриер", photo: "Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
-        { id: 3, name: "Сесилия Уильямс", photo: "сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
-        { id: 4, name: "Анджела Уоррен", photo: "анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
+        { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "static/филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
+        { id: 1, name: "Мередит Блейк", photo: "static/мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
+        { id: 2, name: "Эльза Гриер", photo: "static/Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
+        { id: 3, name: "Сесилия Уильямс", photo: "static/сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
+        { id: 4, name: "Анджела Уоррен", photo: "static/анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
     ];
 /*сбор улик*/
     let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
@@ -752,28 +752,62 @@
 
 
 		/*вместо этого нейронку*/
-            const replies = [
-                "Я видел, как Эльза выходила из мастерской той ночью...", "Кэролайн была нежна, но эмоции зашкаливали.",
-                "Болиголов? Я слышал, его можно спутать с петрушкой.", "Возможно, убийца хотел подставить жену.",
-                "Проверьте кружку для пива, там был странный привкус.", "Я солгал на суде, но только чтобы защитить честь семьи.",
-                "Эльза Гриер имела сильный мотив.", "Анджела была рядом с ядом? Не верю.", "Эмиас собирался бросить Эльзу.",
-                "У неё были алиби, но слишком гладкое.", "В ту ночь кто-то плакал в саду.", "Истина где-то рядом."
-            ];
-            const reply = replies[Math.floor(Math.random() * replies.length)];
-            suspect.history.push({ sender: 'ai', text: reply });
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg-ai';
-            aiDiv.innerText = reply;
-            aiDiv.addEventListener('mouseup', () => {
-                const selected = window.getSelection().toString().trim();
-                if (selected) {
-                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
-                    showToast(`Улика добавлена для ${suspect.name}`);
-                    window.getSelection().removeAllRanges();
+            fetch('/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: suspect.name, question: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showToast('Ошибка: ' + data.error);
+                    return;
                 }
+                const reply = data.answer;
+                suspect.history.push({ sender: 'ai', text: reply });
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'msg-ai';
+                aiDiv.innerText = reply;
+                // Обработчик выделения улик
+                aiDiv.addEventListener('mouseup', () => {
+                    const selected = window.getSelection().toString().trim();
+                    if (selected) {
+                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                        showToast(`Улика добавлена для ${suspect.name}`);
+                        window.getSelection().removeAllRanges();
+                    }
+                });
+                msgContainer.appendChild(aiDiv);
+                scrollToBottom();
+                makeEvidenceSelectable(msgContainer, suspect.id);
+                
+                // Проверка лимита сообщений (если нужно)
+                if (suspect.msgCount >= suspect.dialogLimit) {
+                    suspect.finished = true;
+                    closeModal();
+                    showFinishedDialog(suspect);
+                    updateMainUI();
+                    showToast(`Допрос ${suspect.name} завершён!`);
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка связи с сервером');
+                console.error(err);
             });
-            msgContainer.appendChild(aiDiv);
-		/*конец замены*/
+                        suspect.history.push({ sender: 'ai', text: reply });
+                        const aiDiv = document.createElement('div');
+                        aiDiv.className = 'msg-ai';
+                        aiDiv.innerText = reply;
+                        aiDiv.addEventListener('mouseup', () => {
+                            const selected = window.getSelection().toString().trim();
+                            if (selected) {
+                                evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                                showToast(`Улика добавлена для ${suspect.name}`);
+                                window.getSelection().removeAllRanges();
+                            }
+                        });
+                        msgContainer.appendChild(aiDiv);
+                    /*конец замены*/
 
 
             scrollToBottom();
