@@ -771,28 +771,62 @@
 
 
 		/*вместо этого нейронку*/
-            const replies = [
-                "Я видел, как Эльза выходила из мастерской той ночью...", "Кэролайн была нежна, но эмоции зашкаливали.",
-                "Болиголов? Я слышал, его можно спутать с петрушкой.", "Возможно, убийца хотел подставить жену.",
-                "Проверьте кружку для пива, там был странный привкус.", "Я солгал на суде, но только чтобы защитить честь семьи.",
-                "Эльза Гриер имела сильный мотив.", "Анджела была рядом с ядом? Не верю.", "Эмиас собирался бросить Эльзу.",
-                "У неё были алиби, но слишком гладкое.", "В ту ночь кто-то плакал в саду.", "Истина где-то рядом."
-            ];
-            const reply = replies[Math.floor(Math.random() * replies.length)];
-            suspect.history.push({ sender: 'ai', text: reply });
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg-ai';
-            aiDiv.innerText = reply;
-            aiDiv.addEventListener('mouseup', () => {
-                const selected = window.getSelection().toString().trim();
-                if (selected) {
-                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
-                    showToast(`Улика добавлена для ${suspect.name}`);
-                    window.getSelection().removeAllRanges();
+            fetch('/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: suspect.name, question: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showToast('Ошибка: ' + data.error);
+                    return;
                 }
+                const reply = data.answer;
+                suspect.history.push({ sender: 'ai', text: reply });
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'msg-ai';
+                aiDiv.innerText = reply;
+                // Обработчик выделения улик
+                aiDiv.addEventListener('mouseup', () => {
+                    const selected = window.getSelection().toString().trim();
+                    if (selected) {
+                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                        showToast(`Улика добавлена для ${suspect.name}`);
+                        window.getSelection().removeAllRanges();
+                    }
+                });
+                msgContainer.appendChild(aiDiv);
+                scrollToBottom();
+                makeEvidenceSelectable(msgContainer, suspect.id);
+                
+                // Проверка лимита сообщений (если нужно)
+                if (suspect.msgCount >= suspect.dialogLimit) {
+                    suspect.finished = true;
+                    closeModal();
+                    showFinishedDialog(suspect);
+                    updateMainUI();
+                    showToast(`Допрос ${suspect.name} завершён!`);
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка связи с сервером');
+                console.error(err);
             });
-            msgContainer.appendChild(aiDiv);
-		/*конец замены*/
+                        suspect.history.push({ sender: 'ai', text: reply });
+                        const aiDiv = document.createElement('div');
+                        aiDiv.className = 'msg-ai';
+                        aiDiv.innerText = reply;
+                        aiDiv.addEventListener('mouseup', () => {
+                            const selected = window.getSelection().toString().trim();
+                            if (selected) {
+                                evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                                showToast(`Улика добавлена для ${suspect.name}`);
+                                window.getSelection().removeAllRanges();
+                            }
+                        });
+                        msgContainer.appendChild(aiDiv);
+                    /*конец замены*/
 
 
             scrollToBottom();
