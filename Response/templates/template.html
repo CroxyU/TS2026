@@ -153,8 +153,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.2rem;
+            overflow: hidden;
             border: 2px solid #b68b40;
+        }
+        .suspect-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .suspect-name { font-weight: bold; font-size: 1rem; margin-bottom: 6px; color: #e2cfac; }
         .desc-icon {
@@ -233,6 +238,47 @@
         }
         .close-cross:hover { color: #e6c87a; }
 
+        /* КАСТОМНЫЙ MINI-ДИАЛОГ ПОДТВЕРЖДЕНИЯ */
+        .custom-confirm {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1e242c;
+            border: 1px solid #c9a87b;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.8rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 11000;
+            text-align: center;
+            min-width: 280px;
+            backdrop-filter: blur(8px);
+        }
+        .custom-confirm p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            color: #eedba7;
+        }
+        .custom-confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .custom-confirm-buttons button {
+            background: #5f4a2e;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 0.9rem;
+            transition: 0.1s;
+            color: #faf0cf;
+        }
+        .custom-confirm-buttons button:first-child:hover { background: #9e3e3e; }
+        .custom-confirm-buttons button:last-child:hover { background: #7f6139; }
+
         /* ДИАЛОГОВОЕ ОКНО */
         .dialog-window {
             width: 700px;
@@ -248,11 +294,16 @@
         .chat-header-fixed {
             background: #2c241a;
             padding: 14px 20px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #c9a064;
+        }
+        .chat-header-fixed h3 {
             font-size: 1.2rem;
             font-weight: bold;
             color: #eedba7;
-            border-bottom: 2px solid #c9a064;
+            margin: 0;
         }
         .chat-header-finished {
             background: #4a2e2e;
@@ -326,6 +377,18 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
+        .close-dialog-btn {
+            background: #7a2e2e;
+            border: none;
+            color: #faf0cf;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .close-dialog-btn:hover { background: #9e3e3e; }
 
         /* БОЛЬШОЕ ОКНО УЛИК */
         .evidence-modal-overlay {
@@ -414,23 +477,6 @@
             background: #f5e6b3;
             color: #2c1a0c;
         }
-	.suspect-photo {
-	    width: 100px;
-	    height: 100px;
-	    background: #2c3545;
-	    border-radius: 50%;
-	    margin: 0 auto 12px;
-	    display: flex;
-	    align-items: center;
-	    justify-content: center;
-	    overflow: hidden;
-	    border: 2px solid #b68b40;
-	}
-	.suspect-photo img {
-	    width: 100%;
-	    height: 100%;
-	    object-fit: cover;
-	}
         .evidence-paper-area {
             flex: 1;
             padding: 1.5rem;
@@ -540,11 +586,11 @@
     ];
 
 const suspects = [
-    { id: 0, name: "Филип Блейк", photo: "static/филиппблейк.jpg", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
-    { id: 1, name: "Мередит Блейк", photo: "static/мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
-    { id: 2, name: "Эльза Гриер", photo: "static/Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
-    { id: 3, name: "Сесилия Уильямс", photo: "static/сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
-    { id: 4, name: "Анджела Уоррен", photo: "static/анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
+    { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
+    { id: 1, name: "Мередит Блейк", photo: "мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
+    { id: 2, name: "Эльза Гриер", photo: "Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
+    { id: 3, name: "Сесилия Уильямс", photo: "сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
+    { id: 4, name: "Анджела Уоррен", photo: "анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
 ];
 
     let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
@@ -587,17 +633,37 @@ const suspects = [
         return modalDiv;
     }
 
-    function showCharacterDescription(s) {
-    showModal(`
-        <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
-            <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; background:#2c323f;">
-                <img src="${s.photo}" style="width:100%; height:100%; object-fit:cover;">
+    // Кастомное подтверждение (без confirm)
+    function showCustomConfirm(message, onConfirm) {
+        const confirmDiv = document.createElement('div');
+        confirmDiv.className = 'custom-confirm';
+        confirmDiv.innerHTML = `
+            <p>${message}</p>
+            <div class="custom-confirm-buttons">
+                <button id="confirmYes">Да</button>
+                <button id="confirmNo">Отмена</button>
             </div>
-            <div><h2 style="color:#eedba7;">${s.name}</h2></div>
-        </div>
-        <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
-    `);
-}
+        `;
+        document.body.appendChild(confirmDiv);
+        const yesBtn = confirmDiv.querySelector('#confirmYes');
+        const noBtn = confirmDiv.querySelector('#confirmNo');
+        const cleanup = () => confirmDiv.remove();
+        yesBtn.onclick = () => { cleanup(); onConfirm(); };
+        noBtn.onclick = () => cleanup();
+        // клик вне окна не закрывает, только кнопки
+    }
+
+    function showCharacterDescription(s) {
+        showModal(`
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
+                <div style="width:80px; height:80px; border-radius:50%; overflow:hidden; background:#2c323f;">
+                    <img src="${s.photo}" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div><h2 style="color:#eedba7;">${s.name}</h2></div>
+            </div>
+            <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
+        `);
+    }
 
     function makeEvidenceSelectable(container, suspectId) {
         if (!container) return;
@@ -638,7 +704,10 @@ const suspects = [
         }).join('');
 
         const modalDiv = showModal(`
-            <div class="chat-header-fixed">🕵️ Допрос: ${suspect.name}</div>
+            <div class="chat-header-fixed">
+                <h3>🕵️ Допрос: ${suspect.name}</h3>
+                <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
+            </div>
             <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
             <div class="chat-input-row">
                 <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
@@ -649,8 +718,22 @@ const suspects = [
         const inputField = modalDiv.querySelector('#chatMsgInput');
         const sendBtn = modalDiv.querySelector('#sendMsgBtn');
         const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
+        const finishBtn = modalDiv.querySelector('#forceFinishDialogBtn');
+
         function scrollToBottom() { msgContainer.scrollTop = msgContainer.scrollHeight; }
         makeEvidenceSelectable(msgContainer, suspect.id);
+
+        finishBtn.onclick = () => {
+            showCustomConfirm(
+                `Вы уверены, что хотите завершить диалог с ${suspect.name}?\n\nПосле этого вы не сможете задавать ему вопросы, но сможете просмотреть историю сообщений.`,
+                () => {
+                    suspect.finished = true;
+                    closeModal();
+                    updateMainUI();
+                    showToast(`Диалог с ${suspect.name} завершён. Вы можете просмотреть историю.`);
+                }
+            );
+        };
 
         function addUserMessage(text) {
             if (!text.trim()) return;
@@ -669,14 +752,7 @@ const suspects = [
             userDiv.innerText = text;
             msgContainer.appendChild(userDiv);
             
-            const replies = [
-                "Я видел, как Эльза выходила из мастерской той ночью...", "Кэролайн была нежна, но эмоции зашкаливали.",
-                "Болиголов? Я слышал, его можно спутать с петрушкой.", "Возможно, убийца хотел подставить жену.",
-                "Проверьте кружку для пива, там был странный привкус.", "Я солгал на суде, но только чтобы защитить честь семьи.",
-                "Эльза Гриер имела сильный мотив.", "Анджела была рядом с ядом? Не верю.", "Эмиас собирался бросить Эльзу.",
-                "У неё были алиби, но слишком гладкое.", "В ту ночь кто-то плакал в саду.", "Истина где-то рядом."
-            ];
-            const reply = replies[Math.floor(Math.random() * replies.length)];
+            const reply = Reply(Name, Qestion);
             suspect.history.push({ sender: 'ai', text: reply });
             const aiDiv = document.createElement('div');
             aiDiv.className = 'msg-ai';
@@ -888,6 +964,7 @@ const suspects = [
         const cards = document.querySelectorAll('.suspect-card');
         suspects.forEach((s, i) => { if (s.finished && cards[i]) cards[i].classList.add('grayed'); });
     }
+    
     function renderMainScreen() {
         const mainDiv = document.createElement('div');
         mainDiv.className = 'main-game';
@@ -903,7 +980,7 @@ const suspects = [
         suspects.forEach(s => {
             const card = document.createElement('div');
             card.className = `suspect-card ${s.finished ? 'grayed' : ''}`;
-           card.innerHTML = `<div class="suspect-photo"><img src="${s.photo}" alt="${s.name}"></div><div class="suspect-name">${s.name}</div><div class="desc-icon">📄 описание</div>`;
+            card.innerHTML = `<div class="suspect-photo"><img src="${s.photo}" alt="${s.name}"></div><div class="suspect-name">${s.name}</div><div class="desc-icon">📄 описание</div>`;
             card.querySelector('.desc-icon').onclick = (e) => { e.stopPropagation(); showCharacterDescription(s); };
             card.onclick = () => openDialog(s);
             grid.appendChild(card);

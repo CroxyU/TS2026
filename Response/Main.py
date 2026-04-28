@@ -3,16 +3,19 @@ from Response.WorkWithHTML import Persons
 from core.Requests import Answer
 from core.Requests import ChangePerson
 
-def Work(Name, Quetion):
+def Work(Name, Question):
     P = Persons[Name]
-    P.ConversationHistory.append(Quetion)
     if P.IsActive:
+        P.ConversationHistory.append({"role": "user", "content": Question})
         Ans = Answer(P.ConversationHistory)
-        P.ConversationHistory.append(Ans)
-        
-    elif not P.IsActive:
-            P.ConversationHistory.append(ChangePerson(Name))
+        P.ConversationHistory.append({"role": "assistant", "content": Ans})
+
+    else:
+            P.ConversationHistory.append({"role": "system", "content": ChangePerson(Name)})
+            P.ConversationHistory.append({"role": "user", "content": Question})
             Ans = Answer(P.ConversationHistory)
-            P.ConversationHistory.append(Ans)
+            P.ConversationHistory.append({"role": "assistant", "content": Ans})
+            
     return Ans 
     
+print(f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}", f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}")
