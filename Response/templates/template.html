@@ -547,6 +547,68 @@
             70% { opacity: 1; }
             100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
         }
+        /* Стили для викторины (блок обвинения) */
+    .quiz-modal-content {
+        text-align: left;
+    }
+    .quiz-question {
+        margin-bottom: 1.5rem;
+         padding-bottom: 0.8rem;
+       border-bottom: 1px dashed #b8860b;
+    }
+    .quiz-question p {
+        font-weight: bold;
+        color: #eedba7;
+        margin-bottom: 0.5rem;
+    }
+    .quiz-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    .quiz-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        background: #0f141c;
+        padding: 6px 10px;
+        border-radius: 20px;
+    }
+    .quiz-option:hover {
+        background: #2a2f38;
+    }
+    .quiz-option input {
+        accent-color: #b8860b;
+        width: 16px;
+        height: 16px;
+    }
+    #submitQuizBtn {
+        background: #7f6139;
+        border: none;
+        border-radius: 60px;
+        padding: 10px 20px;
+        font-weight: bold;
+        color: #faf0cf;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 15px;
+    }
+    #quizResult {
+        margin-top: 15px;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 10px;
+        border-radius: 40px;
+    }
+    .quiz-win {
+        background: #1a3a1a;
+        color: #8bc34a;
+    }
+    .quiz-lose {
+        background: #3a1a1a;
+        color: #e57373;
+    }
         .fullscreen-message {
             position: fixed;
             top: 0;
@@ -1014,75 +1076,83 @@ function openEvidenceWindow() {
     overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
     }
     function openVerdictModal() {
-        const allFinished = suspects.every(s => s.finished === true);
-        if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
-        const modalDiv = showModal(`
-            <h3>⚖️ ВЫНЕСЕНИЕ ПРИГОВОРА</h3>
-            <p>Вы собрали улики и допросили всех. Кто убийца?</p>
-            <select id="killerSelect" style="width:100%; padding:12px; margin:15px 0; background:#2a2f38; color:#eedba7; border-radius:40px;">
-                <option value="Филип Блейк">Филип Блейк</option>
-                <option value="Мередит Блейк">Мередит Блейк</option>
-                <option value="Эльза Гриер"> Эльза Гриер</option>
-                <option value="Сесилия Уильямс">Сесилия Уильямс</option>
-                <option value="Анджела Уоррен">Анджела Уоррен</option>
-            </select>
-            <button id="confirmVerdictBtn" style="background:#9e6b3e; padding:12px; width:100%; border-radius:60px; color:#faf0cf;">ОБВИНИТЬ</button>
-        `);
-        
-        const confirmBtn = modalDiv.querySelector('#confirmVerdictBtn');
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-        
-        newConfirmBtn.onclick = () => {
-            const selected = modalDiv.querySelector('#killerSelect').value;
-            closeModal();
-            const fsDiv = document.createElement('div');
-            fsDiv.className = 'fullscreen-message';
-            if (selected === "Эльза Гриер") {
-                fsDiv.innerHTML = `
-                    <div style="background:#000000aa; padding:2rem; border-radius:50px; max-width:90%;">
-                        🔪 ИСТИННЫЙ УБИЙЦА — ЭЛЬЗА ГРИЕР<br>
-                        Она отравила Эмиаса из ревности и мести.<br>
-                        ✅ ВЫ ОБВИНИЛИ ПРАВИЛЬНО!
-                        <div class="final-buttons">
-                            <button id="restartFromFinalBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
-                        </div>
-                    </div>
-                `;
-                const restartBtn = fsDiv.querySelector('#restartFromFinalBtn');
-                if (restartBtn) restartBtn.onclick = () => location.reload();
-            } else {
-                fsDiv.innerHTML = `
-                    <div style="background:#2a1a1a; padding:2rem; border-radius:50px; max-width:90%;">
-                        ❌ ВЫ ОБВИНИЛИ НЕВИНОВНОГО<br>
-                        <span style="font-size:1rem;">Правда ещё не раскрыта...</span>
-                        <div class="final-buttons">
-                            <button id="revealBtn" class="final-btn">🔍 РАСКРЫТЬ УБИЙЦУ</button>
-                            <button id="restartFromFinalBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
-                        </div>
-                    </div>
-                `;
-                const revealBtn = fsDiv.querySelector('#revealBtn');
-                const restartBtn = fsDiv.querySelector('#restartFromFinalBtn');
-                if (revealBtn) {
-                    revealBtn.onclick = () => {
-                        fsDiv.innerHTML = `
-                            <div style="background:#000000aa; padding:2rem; border-radius:50px; max-width:90%;">
-                                🔪 ИСТИННЫЙ УБИЙЦА — ЭЛЬЗА ГРИЕР<br>
-                                Она отравила Эмиаса из ревности и мести.
-                                <div class="final-buttons">
-                                    <button id="restartGameBtn" class="final-btn">🔄 НАЧАТЬ ЗАНОВО</button>
-                                </div>
-                            </div>
-                        `;
-                        const restartGameBtn = fsDiv.querySelector('#restartGameBtn');
-                        if (restartGameBtn) restartGameBtn.onclick = () => location.reload();
-                    };
+    const allFinished = suspects.every(s => s.finished === true);
+    if (!allFinished) {
+        showToast("Допросите всех подозреваемых (каждого до конца).");
+        return;
+    }
+
+    // Массив вопросов (первый – 5 вариантов, остальные – по 4)
+    const quizQuestions = [
+        {
+            text: "Кто из перечисленных не является подозреваемым в романе?",
+            options: ["Филип Блейк", "Мередит Блейк", "Эльза Гриер", "Мисс Марпл", "Анджела Уоррен"],
+            correct: 3
+            
+        },
+        {
+            text: "Кто является главным детективом в романе «Пять поросят»?",
+            options: ["Эркюль Пуаро", "Мисс Марпл", "Комиссар Мегрэ", "Шерлок Холмс", "Ниро Вульф"],
+            correct: 0
+            
+        },
+        {
+            text: "Как был убит Эмиас Крейл?",
+            options: ["Самоубийство", "Отравление", "Смертельное ранение ножом", "остановка сердца"],
+            correct: 1 
+        },
+        {
+            text: "Где был найден Эмиас Крейл?",
+            options: ["у себя в комнате", "На диване", "На работе", "В саду"],
+            correct: 3
+        },
+        {
+            text: "Кого защищала Кэролайн?",
+            options: ["Мисс Марпл", "Мередит Блейк", "Эльзу Гриер", "Анджелу УорренМисс Марпл", "Сесилию Уильямс"],
+            correct: 0
+        }
+    ];
+
+    // Генерируем HTML викторины
+        let quizHtml = `<div class="quiz-modal-content"><h3>⚖️ ВЫНЕСЕНИЕ ПРИГОВОРА</h3>
+                        <p>Ответьте на вопросы, чтобы доказать свою правоту.</p>`;
+        quizQuestions.forEach((q, idx) => {
+            quizHtml += `<div class="quiz-question" data-qidx="${idx}">
+                            <p>${idx+1}. ${q.text}</p>
+                            <div class="quiz-options">`;
+            q.options.forEach((opt, optIdx) => {
+                quizHtml += `<label class="quiz-option">
+                                <input type="radio" name="q${idx}" value="${optIdx}">
+                                <span>${escapeHtml(opt)}</span>
+                             </label>`;
+            });
+            quizHtml += `</div></div>`;
+        });
+        quizHtml += `<button id="submitQuizBtn">Проверить ответы</button>
+                     <div id="quizResult"></div></div>`;
+
+        const modalDiv = showModal(quizHtml, 'wide-modal', true);
+    
+    // Обработчик кнопки проверки
+        const submitBtn = modalDiv.querySelector('#submitQuizBtn');
+        if (submitBtn) {
+            submitBtn.onclick = () => {
+                let correctCount = 0;
+                quizQuestions.forEach((q, idx) => {
+                    const selected = modalDiv.querySelector(`input[name="q${idx}"]:checked`);
+                    if (selected && parseInt(selected.value) === q.correct) {
+                        correctCount++;
+                    }
+                });
+                const total = quizQuestions.length;
+                const resultDiv = modalDiv.querySelector('#quizResult');
+                if (correctCount >= 4) {
+                    resultDiv.innerHTML = `<div class="quiz-win">✅ ВЫ ПОБЕДИЛИ!<br>Правильных ответов: ${correctCount} из ${total}<br>Настоящий убийца — Эльза Гриер.</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="quiz-lose">❌ ВЫ ПРОИГРАЛИ.<br>Правильных ответов: ${correctCount} из ${total}<br>Попробуйте ещё раз, перезапустив игру.</div>`;
                 }
-                if (restartBtn) restartBtn.onclick = () => location.reload();
-            }
-            document.body.appendChild(fsDiv);
-        };
+            };
+        }
     }
     
     function updateMainUI() {
