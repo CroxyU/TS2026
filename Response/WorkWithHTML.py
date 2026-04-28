@@ -48,7 +48,7 @@ def ask():
         answer = Answer(person.ConversationHistory)
         
         person.ConversationHistory.append({"role": "assistant", "content": answer})
-        history2 = person.ConversationHistory[1:]
+        history2 = [{"role":"system", "content" : f"Ты на допросе. Насколько следующий вопрос тебя утомляет? Оцени полученный уровень усталости от 5 до 50. Для оценки принимай во внимание какие темы обсуждаются  (Если игрок пытается говорить о темах, не имеющих отношения к допросу, пытается сломать 'четвёртую стену' сильно повышай усталость ).\n Формат ответа: <int> \n (Пример: '10')"}, person.ConversationHistory[-2:]]
         #Angr = Answer([{"role":"system", "content" : f"Ты на допросе. В любой момент ты можешь закончить разговор, если слишком устал. Сейчас ты устал на {person.Angry} из 100. Насколько следующий вопрос тебя утомляет? Оцени полученный уровень усталости от 10 до 100. Когда усталость достигнет 100, разговор будет завершен. Для оценки принимай во внимание какие темы обсуждаются  (Если игрок пытается говорить о темах, не имеющих отношения к допросу, пытается сломать 'четвёртую стену' сильно повышай усталость ). Формат ответа: целое число без дополнительных символов."},person.ConversationHistory[-2]])
         Angr = Fatigue(history2, person)
         print(Angr)
@@ -61,19 +61,8 @@ def ask():
             ##
             print(f"Текущий уровень злости {name}: {person.Angry}")
 
-        return jsonify({'answer': answer})
+        return jsonify({'answer': answer, 'angry': person.Angry})
     except Exception as e:
         return jsonify({'error': f'Ошибка сервера: {str(e)}'}), 500
-@app.route('/angry', methods=['POST'])
-def angry():
-    data = request.get_json()
-    name = data.get('name')
-    if not NAMES[name]:
-        return jsonify({'error': 'Не указано имя'}), 400
-    if NAMES[name] not in Persons:
-        return jsonify({'error': 'Персонаж не найден'}), 404
-
-    person = Persons[name]
-    return jsonify({'angry': person.Angry})
 if __name__ == '__main__':
     app.run(debug=True)
