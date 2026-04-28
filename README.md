@@ -68,7 +68,7 @@ python Response/WorkWithHTML.py
 │   └── templates/
 │       └── template.html  # Основной шаблон игры
 ├── requirements.txt
-├── .env (не комитьте)
+├── .env 
 ├── .gitignore
 └── README.md
 ```
