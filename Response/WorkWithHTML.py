@@ -46,8 +46,17 @@ def ask():
 
        
         answer = Answer(person.ConversationHistory)
-        print(answer)
         person.ConversationHistory.append({"role": "assistant", "content": answer})
+        try:
+            Angr = int(Answer([{"role":"system", "content" : f"Сейчас ты раздражен на {person.Angry} из 100. Насколько следующий вопрос тебя еще раздражит? Оцени от 0 до 100. Ответ должен быть только числом."}, str(person.ConversationHistory[-2]["content"])]))
+        except:
+            print("Ошибка при оценке злости. WorkWithHTML.py Ответ по умолчанию: 0")
+            Angr = 0
+        
+        person.Angry += Angr  
+        if person.Angry >= 100:
+            return 
+        print(f"Текущий уровень злости {name}: {person.Angry}")
 
         return jsonify({'answer': answer})
     except Exception as e:
