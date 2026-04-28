@@ -66,7 +66,7 @@ python Response/WorkWithHTML.py
 ├── Response/
 │   ├── WorkWithHTML.py    # Flask-приложение
 │   └── templates/
-│       └── template.html  # Основной шаблон игры
+│       └── index.html  # Основной шаблон игры
 ├── requirements.txt
 ├── .env 
 ├── .gitignore
