@@ -10,7 +10,35 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        * {
+    scrollbar-color: #5F4A2E !important;
+    scrollbar-width: auto !important;
+}
+ 
+html ::-webkit-scrollbar, body ::-webkit-scrollbar 
+{
+    width: 8px;
+    height: 8px;
+    background-color:  transparent !important;
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0);
+    background-clip: padding-box;
+}
+ 
+html ::-webkit-scrollbar-thumb,
+body ::-webkit-scrollbar-thumb {
+    background-color: #5F4A2E !important;
+    border-radius: 2px;
+    box-shadow: none;
+    border: 2px solid rgba(0,0,0,0);
+    background-clip: padding-box;
+}
+ 
+html ::-webkit-scrollbar-thumb:hover,
+body ::-webkit-scrollbar-thumb:hover {
+    border: 1px solid rgba(0,0,0,0);
+    border-radius: 2px;
+}
         body {
             font-family: 'Segoe UI', 'Courier New', monospace;
             background: #0a0c12;
