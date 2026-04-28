@@ -1,5 +1,5 @@
 class Central():
-    def __init__(self, Angry, Work, Age, Name ):
+    def __init__(self, Angry, Work, Age, Name, PreHistory):
         # self.Person = "Start" # Angela / Meredict / Sesil / Fillip / Elsa 
         # self.Angela = {"Angry":0, "IsWork" : True, "Age" : 38, "Name" : "Анжела"}
         # self.Meredict = {"Angry":0, "IsWork" : True, "Age" : 38, "Name" : "Мередикт"}
@@ -11,6 +11,6 @@ class Central():
         self.Age = Age
         self.Name = Name 
         self.IsActive = False
-        self.ConversationHistory = []
+        self.ConversationHistory = PreHistory
 
 
