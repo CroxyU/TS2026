@@ -1,9 +1,21 @@
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
-from core.Requests import ChangePerson, Answer
+import sys
+import os
+# Добавляем путь к корневой папке TS2026
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Теперь импорты работают
+from core.Central import Central
+from core.Requests import *
+
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-CORS(app)  # разрешаем запросы с фронтенда
+
+@app.route('/')
+def index():
+    return render_template('template.html')
+
+
 NAMES = {"Филип Блейк":"Fillip", "Мередит Блейк": "Meredict", "Эльза Гриер" : "Elsa", "Сесилия Уильямс": "Sesil", "Анджела Уоррен": "Angela", "Angela":"Angela", "Sesil":"Sesil", "Elsa": "Elsa" ,"Meredict":"Meredict","Fillip":"Fillip"} 
 Persons = {"Angela" : Central(0, True, 36, "Анжела"),
            "Meredict" : Central(0, True, 46, "Мередикт"),
@@ -11,37 +23,35 @@ Persons = {"Angela" : Central(0, True, 36, "Анжела"),
            "Fillip" : Central(0, True, 46, "Филип"),
            "Elsa" : Central(0, True, 46, "Эльза"), }
 
-@app.route('/')
-def index():
-    return render_template('index.html')  # ваша HTML-игра
-
 @app.route('/ask', methods=['POST'])
 def ask():
-    data = request.json
-    suspect_name = data.get('name')           # имя персонажа
-    user_question = data.get('question')      # текущий вопрос
-    history = data.get('history', [])         # история сообщений: [{"role": "user/assistant", "content": "..."}]
-    
-    if not suspect_name or not user_question:
-        return jsonify({"error": "Missing name or question"}), 400
-    
-    # 1. Получаем системный промпт для этого персонажа (его характер)
-    system_prompt = ChangePerson(suspect_name)   # читает файл Docs/Имя - PRESS.txt
-    
-    # 2. Собираем полный список сообщений для Groq
-    messages = [
-        {"role": "system", "content": system_prompt},
-        *history,                     # предыдущие сообщения (user + assistant)
-        {"role": "user", "content": user_question}   # текущий вопрос
-    ]
-    
-    # 3. Вызываем вашу функцию Answer (отправляет запрос в Groq)
+    data = request.get_json()
+    name = data.get('name')
+    question = data.get('question', '').strip()
+    if not NAMES[name] or not question:
+        return jsonify({'error': 'Не указано имя или вопрос'}), 400
+    if NAMES[name] not in Persons:
+        return jsonify({'error': 'Персонаж не найден'}), 404
+
+    person = Persons[name]
     try:
-        answer = Answer(messages)
-        return jsonify({"answer": answer})
+        if not person.IsActive:
+            system_prompt = ChangePerson(NAMES[name])
+            person.ConversationHistory = [{"role": "system", "content": system_prompt}]
+            greeting = f"Добрый день. Я {name}. Задавайте вопросы."
+            person.ConversationHistory.append({"role": "assistant", "content": greeting})
+            person.IsActive = True
+
+        person.ConversationHistory.append({"role": "user", "content": question})
+
+       
+        answer = Answer(person.ConversationHistory)
+        print(answer)
+        person.ConversationHistory.append({"role": "assistant", "content": answer})
+
+        return jsonify({'answer': answer})
     except Exception as e:
-        print("Ошибка при вызове Groq:", e)
-        return jsonify({"error": str(e)}), 500
+        return jsonify({'error': f'Ошибка сервера: {str(e)}'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)

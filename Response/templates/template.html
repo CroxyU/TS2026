@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Пять поросят — детективная игра</title>
-
-
-    
     <style>
         * {
             margin: 0;
@@ -22,41 +19,6 @@
             overflow: hidden;
             position: relative;
         }
-	.evidence-list-modal li {
-	    display: flex;
-	    justify-content: space-between;
-	    align-items: center;
-	    gap: 10px;
-	}
-	.delete-evidence-btn {
- 	   background: #7a2e2e;
- 	   border: none;
-	    color: #faf0cf;
-	    border-radius: 20px;
-	    padding: 4px 12px;
-	    cursor: pointer;
-	    font-size: 0.7rem;
-	    transition: 0.1s;
-	}
-	.delete-evidence-btn:hover {
-	    background: #9e3e3e;
-	}
-	
-	/* Кнопка очистки всех улик для текущего подозреваемого */
-	.clear-all-evidence {
-	    background: #5f4a2e;
-	    border: none;
-	    border-radius: 40px;
-	    padding: 8px 16px;
-	    margin: 10px 0;
-	    cursor: pointer;
-	    color: #faf0cf;
-	    font-weight: bold;
-	    width: 100%;
-	}
-	.clear-all-evidence:hover {
-	    background: #7f6139;
-	}
         .page-overlay {
             position: fixed;
             top: 0;
@@ -603,6 +565,7 @@
 <body>
 <div id="appRoot"></div>
 <script>
+
     const openingLines = [
         "Месье Пуаро, я уже всё рассказал полиции тогда. Но если вам хочется покопаться в старых костях — ради бога. Только боюсь, вы зря теряете время.",
         "О… это очень тяжело. Я до сих пор виню себя за те разговоры о цикуте. Но если моя память поможет Карле… я постараюсь. Извините, я волнуюсь.",
@@ -617,12 +580,10 @@
         { id: 3, name: "Сесилия Уильямс", photo: "static/сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
         { id: 4, name: "Анджела Уоррен", photo: "static/анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
     ];
-    const FLASK_API_URL = "http://localhost:5000/ask";
     let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
     let currentModal = null;
     let gameInitialized = false;
     const app = document.getElementById('appRoot');
-
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'toast-notify';
@@ -655,7 +616,7 @@
         }
         return modalDiv;
     }
-    function showCustomConfirm(message, onConfirm) {
+      function showCustomConfirm(message, onConfirm) {
         const confirmDiv = document.createElement('div');
         confirmDiv.className = 'custom-confirm';
         confirmDiv.innerHTML = `
@@ -671,6 +632,7 @@
         const cleanup = () => confirmDiv.remove();
         yesBtn.onclick = () => { cleanup(); onConfirm(); };
         noBtn.onclick = () => cleanup();
+        // клик вне окна не закрывает, только кнопки
     }
     function showCharacterDescription(s) {
         showModal(`
@@ -708,53 +670,125 @@
     }
 
     function renderChatModal(suspect) {
-        if (suspect.finished) {
+    if (suspect.finished) {
+        showFinishedDialog(suspect);
+        return;
+    }
+
+    if (suspect.history.length === 0) {
+        suspect.history.push({ sender: 'ai', text: suspect.opening });
+    }
+
+    const historyHtml = suspect.history.map(msg => {
+        if (msg.sender === 'user')
+            return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
+        else
+            return `<div class="msg-ai">${escapeHtml(msg.text)}</div>`;
+    }).join('');
+
+    const modalDiv = showModal(`
+        <div class="chat-header-fixed">
+            <h3>🕵️ Допрос: ${suspect.name}</h3>
+            <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
+        </div>
+        <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
+        <div class="chat-input-row">
+            <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
+            <button id="sendMsgBtn">📩 Отправить</button>
+        </div>
+    `, 'dialog-window', false);
+
+    const inputField = modalDiv.querySelector('#chatMsgInput');
+    const sendBtn = modalDiv.querySelector('#sendMsgBtn');
+    const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
+    const finishBtn = modalDiv.querySelector('#forceFinishDialogBtn');
+
+    function scrollToBottom() {
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }
+    scrollToBottom();
+
+    makeEvidenceSelectable(msgContainer, suspect.id);
+
+    finishBtn.onclick = () => {
+        showCustomConfirm(
+            `Вы уверены, что хотите завершить диалог с ${suspect.name}?\n\nПосле этого вы не сможете задавать ему вопросы, но сможете просмотреть историю сообщений.`,
+            () => {
+                suspect.finished = true;
+                closeModal();
+                updateMainUI();
+                showToast(`Диалог с ${suspect.name} завершён. Вы можете просмотреть историю.`);
+            }
+        );
+    };
+
+    function addUserMessage(text) {
+        if (!text.trim()) return;
+
+        if (suspect.msgCount >= suspect.dialogLimit) {
+            suspect.finished = true;
+            closeModal();
             showFinishedDialog(suspect);
+            updateMainUI();
+            showToast(`Допрос ${suspect.name} завершён!`);
             return;
         }
-        
-        if (suspect.history.length === 0) {
-            suspect.history.push({ sender: 'ai', text: suspect.opening });
-        }
-        const historyHtml = suspect.history.map(msg => {
-            if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
-            else return `<div class="msg-ai">${escapeHtml(msg.text)}</div>`;
-        }).join('');
 
-        const modalDiv = showModal(`
-            <div class="chat-header-fixed">
-                <h3>🕵️ Допрос: ${suspect.name}</h3>
-                <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
-            </div>
-            <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
-            <div class="chat-input-row">
-                <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
-                <button id="sendMsgBtn">📩 Отправить</button>
-            </div>
-        `, 'dialog-window', false);
+        suspect.history.push({ sender: 'user', text: text });
+        suspect.msgCount++;
 
-        const inputField = modalDiv.querySelector('#chatMsgInput');
-        const sendBtn = modalDiv.querySelector('#sendMsgBtn');
-        const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
-        const finishBtn = modalDiv.querySelector('#forceFinishDialogBtn');
+        const userDiv = document.createElement('div');
+        userDiv.className = 'msg-user';
+        userDiv.innerText = text;
+        msgContainer.appendChild(userDiv);
+        scrollToBottom();
 
-        function scrollToBottom() { msgContainer.scrollTop = msgContainer.scrollHeight; }
-        makeEvidenceSelectable(msgContainer, suspect.id);
+        inputField.value = '';
 
-        finishBtn.onclick = () => {
-            showCustomConfirm(
-                `Вы уверены, что хотите завершить диалог с ${suspect.name}?\n\nПосле этого вы не сможете задавать ему вопросы, но сможете просмотреть историю сообщений.`,
-                () => {
-                    suspect.finished = true;
-                    closeModal();
-                    updateMainUI();
-                    showToast(`Диалог с ${suspect.name} завершён. Вы можете просмотреть историю.`);
-                }
-            );
+        // Маппинг русских имён → английские ключи для сервера
+        const nameMap = {
+            "Филип Блейк": "Fillip",
+            "Мередит Блейк": "Meredict",
+            "Эльза Гриер": "Elsa",
+            "Сесилия Уильямс": "Sesil",
+            "Анджела Уоррен": "Angela"
         };
+        const serverName = nameMap[suspect.name];
+        if (!serverName) {
+            showToast(`Ошибка: неизвестное имя "${suspect.name}"`);
+            return;
+        }
 
-        async function addUserMessage(text) {
-            if (!text.trim()) return;
+        fetch('/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: serverName, question: text })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showToast('Ошибка: ' + data.error);
+                return;
+            }
+
+            const reply = data.answer;
+            suspect.history.push({ sender: 'ai', text: reply });
+
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'msg-ai';
+            aiDiv.innerText = reply;
+            aiDiv.addEventListener('mouseup', () => {
+                const selected = window.getSelection().toString().trim();
+                if (selected) {
+                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                    showToast(`Улика добавлена для ${suspect.name}`);
+                    window.getSelection().removeAllRanges();
+                }
+            });
+
+            msgContainer.appendChild(aiDiv);
+            scrollToBottom();
+            makeEvidenceSelectable(msgContainer, suspect.id);
 
             if (suspect.msgCount >= suspect.dialogLimit) {
                 suspect.finished = true;
@@ -762,91 +796,26 @@
                 showFinishedDialog(suspect);
                 updateMainUI();
                 showToast(`Допрос ${suspect.name} завершён!`);
-                return;
             }
-
-            suspect.history.push({ sender: 'user', text: text });
-            suspect.msgCount++;
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg-user';
-            userDiv.innerText = text;
-            msgContainer.appendChild(userDiv);
-
-            sendBtn.disabled = true;
-            inputField.disabled = true;
-
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'msg-ai';
-            loadingDiv.innerText = '✍️ Печатает...';
-            msgContainer.appendChild(loadingDiv);
-            scrollToBottom();
-
-            const messagesForAI = suspect.history.map(msg => ({
-                role: msg.sender === 'user' ? 'user' : 'assistant',
-                content: msg.text
-            }));
-
-            try {
-                const response = await fetch(FLASK_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: suspect.name,
-                        question: text,
-                        history: messagesForAI
-                    })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Ошибка сервера');
-
-                loadingDiv.remove();
-                const answer = data.answer;
-                suspect.history.push({ sender: 'ai', text: answer });
-
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'msg-ai';
-                aiDiv.innerText = answer;
-                aiDiv.addEventListener('mouseup', () => {
-                    const selected = window.getSelection().toString().trim();
-                    if (selected) {
-                        if (!evidenceMap[suspect.id]) evidenceMap[suspect.id] = [];
-                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
-                        showToast(`Улика добавлена для ${suspect.name}`);
-                        window.getSelection().removeAllRanges();
-                    }
-                });
-                msgContainer.appendChild(aiDiv);
-                scrollToBottom();
-                makeEvidenceSelectable(msgContainer, suspect.id); // для новых сообщений
-
-                if (suspect.msgCount >= suspect.dialogLimit) {
-                    suspect.finished = true;
-                    closeModal();
-                    showFinishedDialog(suspect);
-                    updateMainUI();
-                    showToast(`Допрос ${suspect.name} завершён!`);
-                }
-            } catch (error) {
-                loadingDiv.remove();
-                console.error('Ошибка:', error);
-                const errDiv = document.createElement('div');
-                errDiv.className = 'msg-ai';
-                errDiv.innerText = '❌ Не удалось получить ответ от сервера. Проверьте, запущен ли Flask.';
-                msgContainer.appendChild(errDiv);
-                scrollToBottom();
-            } finally {
-                sendBtn.disabled = false;
-                inputField.disabled = false;
-                inputField.value = '';
-                inputField.focus();
-            }
-        }
-        
-        sendBtn.onclick = () => { const txt = inputField.value.trim(); if (txt) addUserMessage(txt); };
-        inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') addUserMessage(inputField.value.trim()); });
-        scrollToBottom();
+        })
+        .catch(err => {
+            showToast('Ошибка связи с сервером');
+            console.error(err);
+        });
     }
-    
+
+    sendBtn.onclick = () => {
+        const txt = inputField.value.trim();
+        if (txt) addUserMessage(txt);
+    };
+
+    inputField.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const txt = inputField.value.trim();
+            if (txt) addUserMessage(txt);
+        }
+    });
+}
     function showFinishedDialog(suspect) {
         const historyHtml = suspect.history.map(msg => {
             if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
@@ -878,7 +847,6 @@
             });
         }
     }
-    
     let evidenceWindowOpen = false;
     function openEvidenceWindow() {
         if (!gameInitialized) { showToast("Игра не начата."); return; }
@@ -886,7 +854,6 @@
         evidenceWindowOpen = true;
         
         let activeId = 0;
-        
         function renderEvidenceList(suspectId) {
             const listContainer = document.getElementById('evidenceListModal');
             if (!listContainer) return;
@@ -895,41 +862,7 @@
                 listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
                 return;
             }
-            const ul = document.createElement('ul');
-            ul.className = 'evidence-list-modal';
-            evs.forEach((ev, idx) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<span>${escapeHtml(ev)}</span><button class="delete-evidence-btn" data-idx="${idx}">🗑️</button>`;
-                ul.appendChild(li);
-            });
-            listContainer.innerHTML = '';
-            listContainer.appendChild(ul);
-            
-            listContainer.querySelectorAll('.delete-evidence-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const idx = parseInt(btn.dataset.idx);
-                    evidenceMap[suspectId].splice(idx, 1);
-                    renderEvidenceList(suspectId);
-                    showToast(`Улика удалена`);
-                    const clearBtn = document.getElementById('clearAllEvidenceBtn');
-                    if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
-                });
-            });
-        }
-        
-        function clearAllEvidence(suspectId) {
-            if (evidenceMap[suspectId].length === 0) {
-                showToast(`Нет улик для удаления`);
-                return;
-            }
-            showCustomConfirm(`Вы уверены, что хотите удалить ВСЕ улики для ${suspects[suspectId].name}?`, () => {
-                evidenceMap[suspectId] = [];
-                renderEvidenceList(suspectId);
-                showToast(`Все улики для ${suspects[suspectId].name} удалены`);
-                const clearBtn = document.getElementById('clearAllEvidenceBtn');
-                if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
-            });
+            listContainer.innerHTML = evs.map(ev => `<li>${escapeHtml(ev)}</li>`).join('');
         }
         
         const overlay = document.createElement('div');
@@ -943,13 +876,13 @@
                 <div class="evidence-body-flex">
                     <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
                     <div class="evidence-paper-area">
-                        <button id="clearAllEvidenceBtn" class="clear-all-evidence">🗑️ Очистить все улики</button>
                         <ul class="evidence-list-modal" id="evidenceListModal"></ul>
                     </div>
                 </div>
             </div>
         `;
         document.body.appendChild(overlay);
+        
         const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
         suspects.forEach(s => {
             const tab = document.createElement('div');
@@ -958,10 +891,9 @@
             tab.innerText = `📌 ${s.name}`;
             tabsContainer.appendChild(tab);
         });
+        
         renderEvidenceList(0);
-        let clearBtn = overlay.querySelector('#clearAllEvidenceBtn');
-        clearBtn.textContent = `🗑️ Очистить все улики (${suspects[0].name})`;
-        clearBtn.onclick = () => clearAllEvidence(activeId);
+        
         const tabs = overlay.querySelectorAll('.evidence-tab');
         function setActiveTab(id) {
             tabs.forEach(t => {
@@ -969,25 +901,23 @@
                 if (tid === id) t.classList.add('active-tab');
                 else t.classList.remove('active-tab');
             });
-            activeId = id;
-            renderEvidenceList(id);
-            clearBtn.textContent = `🗑️ Очистить все улики (${suspects[id].name})`;
-            clearBtn.onclick = () => clearAllEvidence(id);
         }
         tabs.forEach(tab => {
             tab.onclick = () => {
                 const id = parseInt(tab.dataset.id);
+                activeId = id;
+                renderEvidenceList(id);
                 setActiveTab(id);
             };
         });
         setActiveTab(0);
+        
         overlay.querySelector('#closeEvidenceBtn').onclick = () => {
             overlay.remove();
             evidenceWindowOpen = false;
         };
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
     }
-    
     function openVerdictModal() {
         const allFinished = suspects.every(s => s.finished === true);
         if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
