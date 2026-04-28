@@ -594,6 +594,15 @@
             color: #eedba7;
         }
     </style>
+    <audio id="bgMusic" loop preload="auto" volume="0.3">
+        <source src="/static/sounds/background.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="winSound" preload="auto">
+        <source src="/static/sounds/win.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="loseSound" preload="auto">
+        <source src="/static/sounds/lose.mp3" type="audio/mpeg">
+    </audio>
 </head>
 
 <body>
@@ -630,7 +639,22 @@
             currentModal.remove();
             currentModal = null;
         }
-    }
+    };
+        modalDiv.querySelector('#confirmVerdictBtn').onclick = () => {
+        const selected = modalDiv.querySelector('#killerSelect').value;
+        closeModal();
+        
+        // Выключаем фоновую музыку
+        const bg = document.getElementById('bgMusic');
+        if (bg) { bg.pause(); bg.currentTime = 0; }
+        
+        // Выбираем звук
+        const soundId = (selected === "Эльза Гриер") ? 'winSound' : 'loseSound';
+        const sound = document.getElementById(soundId);
+        if (sound) { sound.play().catch(e=>{}); }
+        
+        const fsDiv = document.createElement('div');
+        
     function showModal(html, className = '', addCloseCross = true) {
         if (currentModal) closeModal();
         const overlay = document.createElement('div');
@@ -1126,6 +1150,16 @@ function openEvidenceWindow() {
         `;
         document.body.appendChild(page);
         page.querySelector('#beginBtn').onclick = () => { page.remove(); showSynopsisPage(); };
+        page.querySelector('#beginBtn').onclick = () => {  
+        // Запуск фоновой музыки
+        const bgMusic = document.getElementById('bgMusic');
+        if (bgMusic) {
+            bgMusic.volume = 0.3;
+            bgMusic.play().catch(e => console.log('Автовоспроизведение запрещено браузером'));
+        }
+        page.remove();
+        showSynopsisPage();
+        };
     }
     
     function showSynopsisPage() {
@@ -1172,8 +1206,9 @@ function openEvidenceWindow() {
     }
     
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    
+
     startOnboarding();
+    }
 </script>
 </body>
 </html>
