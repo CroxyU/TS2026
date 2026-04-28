@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Пять поросят — детективная игра</title>
     <style>
-	/*CSS Тёмная тема, скруглённые углы, бордеры «под старину», Классы для страниц обучения (.page-overlay, .page-card), Классы для главного экрана (.main-game, .top-panel, .round-btn), Классы для карточек подозреваемых (.suspect-card, .suspect-photo), Классы для модальных окон (.modal-overlay, .modal-window), Классы для диалогового окна (.dialog-window, .chat-messages, .msg-user, .msg-ai), Классы для блокнота улик (.evidence-big-window, .evidence-side-tabs и т.д.), Анимации тостов и полноэкранных сообщений.*/
         * {
             margin: 0;
             padding: 0;
@@ -79,8 +78,6 @@
             justify-content: center;
             margin-top: 20px;
         }
-
-        /* ГЛАВНЫЙ ЭКРАН */
         .main-game {
             width: 1300px;
             max-width: 95vw;
@@ -234,8 +231,6 @@
             z-index: 10;
         }
         .close-cross:hover { color: #e6c87a; }
-
-        /* КАСТОМНЫЙ MINI-ДИАЛОГ ПОДТВЕРЖДЕНИЯ */
         .custom-confirm {
             position: fixed;
             top: 50%;
@@ -384,8 +379,6 @@
             transition: 0.1s;
         }
         .close-dialog-btn:hover { background: #9e3e3e; }
-
-        /* БОЛЬШОЕ ОКНО УЛИК */
         .evidence-modal-overlay {
             position: fixed;
             top: 0;
@@ -571,9 +564,8 @@
 
 <body>
 <div id="appRoot"></div>
-/*вся логика игры*/
 <script>
-	/*первые сообщения*/
+
     const openingLines = [
         "Филип Блейк: Я был лучшим другом Эмиаса... Задавайте вопросы, я готов отвечать.",
         "Мередит Блейк: Я редко говорю, но сегодня расскажу правду.",
@@ -581,7 +573,6 @@
         "Сесилия Уильямс: Как гувернантка я многое видела. Готова свидетельствовать.",
         "Анджела Уоррен: Меня всегда подозревали... Но я скажу, что знаю."
     ];
-	/*карточки персонажей*/
     const suspects = [
         { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "static/филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
         { id: 1, name: "Мередит Блейк", photo: "static/мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
@@ -589,12 +580,10 @@
         { id: 3, name: "Сесилия Уильямс", photo: "static/сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
         { id: 4, name: "Анджела Уоррен", photo: "static/анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
     ];
-/*сбор улик*/
     let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
     let currentModal = null;
     let gameInitialized = false;
     const app = document.getElementById('appRoot');
-/*уведомление*/
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'toast-notify';
@@ -602,14 +591,12 @@
         document.body.appendChild(t);
         setTimeout(() => t.remove(), 2000);
     }
-/*закрыть окно*/
     function closeModal() {
         if (currentModal) {
             currentModal.remove();
             currentModal = null;
         }
     }
-/*открыть окно*/
     function showModal(html, className = '', addCloseCross = true) {
         if (currentModal) closeModal();
         const overlay = document.createElement('div');
@@ -629,7 +616,6 @@
         }
         return modalDiv;
     }
-/*завершить диалог подтверждение*/
       function showCustomConfirm(message, onConfirm) {
         const confirmDiv = document.createElement('div');
         confirmDiv.className = 'custom-confirm';
@@ -648,7 +634,6 @@
         noBtn.onclick = () => cleanup();
         // клик вне окна не закрывает, только кнопки
     }
-/*описание персонажа*/
     function showCharacterDescription(s) {
         showModal(`
             <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
@@ -660,7 +645,6 @@
             <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
         `);
     }
-/*добавление улик*/
     function makeEvidenceSelectable(container, suspectId) {
         if (!container) return;
         const aiMessages = container.querySelectorAll('.msg-ai');
@@ -825,8 +809,6 @@
             });
         }
     }
-
-    /*блокнот улик*/
     let evidenceWindowOpen = false;
     function openEvidenceWindow() {
         if (!gameInitialized) { showToast("Игра не начата."); return; }
@@ -898,7 +880,6 @@
         };
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
     }
-    /*приговор*/
     function openVerdictModal() {
         const allFinished = suspects.every(s => s.finished === true);
         if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
@@ -996,10 +977,6 @@
             card.onclick = () => openDialog(s);
             grid.appendChild(card);
         });
-
-
-
-/*кнопки*/
         document.getElementById('rulesIconBtn').onclick = () => showModal(`<h3>📜 Правила</h3><p><strong>Англия, 1938 год. Вы — Эркюль Пуаро.<br></strong> Шестнадцать лет назад в поместье Олдербери был отравлен художник Эмиас Крейл. Его жена осуждена и мертва. Но её дочь просит вас найти настоящего убийцу.<br>
 <strong>Как вести расследование:</strong><br>
 1. Перед вами пять подозреваемых. Вы можете задавать вопросы по очереди каждому из них.<br>
