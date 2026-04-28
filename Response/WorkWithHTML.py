@@ -37,7 +37,7 @@ def ask():
     
     try:
         if not person.IsActive:
-            system_prompt = ChangePerson(NAMES[name])
+            system_prompt = ChangePerson(NAMES[name], person=person)
             person.ConversationHistory = [{"role": "system", "content": system_prompt}]
             greeting = f"Добрый день. Я {name}. Задавайте вопросы."
             person.ConversationHistory.append({"role": "assistant", "content": greeting})
@@ -50,10 +50,10 @@ def ask():
         person.ConversationHistory.append({"role": "assistant", "content": answer})
         history2 = person.ConversationHistory[1:]
         #Angr = Answer([{"role":"system", "content" : f"Ты на допросе. В любой момент ты можешь закончить разговор, если слишком устал. Сейчас ты устал на {person.Angry} из 100. Насколько следующий вопрос тебя утомляет? Оцени полученный уровень усталости от 10 до 100. Когда усталость достигнет 100, разговор будет завершен. Для оценки принимай во внимание какие темы обсуждаются  (Если игрок пытается говорить о темах, не имеющих отношения к допросу, пытается сломать 'четвёртую стену' сильно повышай усталость ). Формат ответа: целое число без дополнительных символов."},person.ConversationHistory[-2]])
-        Angr = Fatigue(history2)
+        Angr = Fatigue(history2, person)
         print(Angr)
-        
-        person.Angry += Angr  
+        person.Angry += int(Angr)  
+        data.set("Angry", person.Angry)
         print(f"Текущий уровень злости {name}: {person.Angry}")
 
 
