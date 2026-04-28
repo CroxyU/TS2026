@@ -24,7 +24,7 @@ def ChangePerson(Name):
 
 def Answer(history):
     response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="groq/compound-mini",
         messages=history,
         temperature=0.8,
         max_tokens=500
