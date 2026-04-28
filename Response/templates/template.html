@@ -19,8 +19,6 @@
             overflow: hidden;
             position: relative;
         }
-
-        /* СТРАНИЦЫ ОБУЧЕНИЯ */
         .page-overlay {
             position: fixed;
             top: 0;
@@ -80,8 +78,6 @@
             justify-content: center;
             margin-top: 20px;
         }
-
-        /* ГЛАВНЫЙ ЭКРАН */
         .main-game {
             width: 1300px;
             max-width: 95vw;
@@ -193,8 +189,6 @@
             letter-spacing: 2px;
         }
         .verdict-fixed:hover { background: #9e3e3e; transform: translateX(-50%) scale(1.02); }
-
-        /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -237,8 +231,6 @@
             z-index: 10;
         }
         .close-cross:hover { color: #e6c87a; }
-
-        /* КАСТОМНЫЙ MINI-ДИАЛОГ ПОДТВЕРЖДЕНИЯ */
         .custom-confirm {
             position: fixed;
             top: 50%;
@@ -278,8 +270,6 @@
         }
         .custom-confirm-buttons button:first-child:hover { background: #9e3e3e; }
         .custom-confirm-buttons button:last-child:hover { background: #7f6139; }
-
-        /* ДИАЛОГОВОЕ ОКНО */
         .dialog-window {
             width: 700px;
             max-width: 90vw;
@@ -389,8 +379,6 @@
             transition: 0.1s;
         }
         .close-dialog-btn:hover { background: #9e3e3e; }
-
-        /* БОЛЬШОЕ ОКНО УЛИК */
         .evidence-modal-overlay {
             position: fixed;
             top: 0;
@@ -573,10 +561,11 @@
         }
     </style>
 </head>
+
 <body>
 <div id="appRoot"></div>
-
 <script>
+
     const openingLines = [
         "Месье Пуаро, я уже всё рассказал полиции тогда. Но если вам хочется покопаться в старых костях — ради бога. Только боюсь, вы зря теряете время.",
         "О… это очень тяжело. Я до сих пор виню себя за те разговоры о цикуте. Но если моя память поможет Карле… я постараюсь. Извините, я волнуюсь.",
@@ -584,20 +573,17 @@
         "Я не понимаю, зачем ворошить прошлое. Но если вы хотите знать правду — что ж, я всегда смотрела ей в глаза.",
         "Месье Пуаро, я ждала этого дня шестнадцать лет. Спрашивайте всё, что хотите. Я устала молчать."
     ];
-
-const suspects = [
-    { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
-    { id: 1, name: "Мередит Блейк", photo: "мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
-    { id: 2, name: "Эльза Гриер", photo: "Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
-    { id: 3, name: "Сесилия Уильямс", photo: "сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
-    { id: 4, name: "Анджела Уоррен", photo: "анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
-];
-
+    const suspects = [
+        { id: 0, name: "Филип Блейк", role: "Филип Блейк — мужчина около пятидесяти лет, в молодости был красив, хотя глаза посажены слишком близко; имеет склонность к полноте, но физически крепок и хорошо сложён. Держится уверенно, с лёгкой самоиронией, одет по-деловому, со вкусом и без излишеств.", photo: "static/филиппблейк.jpg", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[0] },
+        { id: 1, name: "Мередит Блейк", photo: "static/мередитблейк.jpg", role: "Мередит Блейк — мягкие, интеллигентные черты лица, без резкости; часто выглядит задумчивым или растерянным; носит очки для чтения, одевается старомодно, не следит за модой; сутулые плечи, неуклюжие движения от стеснительности, часто краснеет при разговоре на личные темы.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[1] },
+        { id: 2, name: "Эльза Гриер", photo: "static/Эльзагриер.jpg", role: "Эльза Гриер — около тридцати шести лет, выглядит старше от усталости. Лицо правильной овальной формы, бледное, черты безжизненные, как маска. Большие серые глаза — «мёртвые озёра», лишь в воспоминаниях появляется блеск. Волосы чёрные, коротко стриженые, идеально уложены. Одежда элегантна и проста (тёмное платье, жемчуг). Руки изящные, ногти без лака. Осанка прямая, движения плавные, но холодные. Красота рассудочная — «сухой и колючий цветок».", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[2] },
+        { id: 3, name: "Сесилия Уильямс", photo: "static/сесилияуильямс.jpg", role: "Сесилия Уильямс — уже в годах, невысокого роста, одежда поношенная, но безупречно аккуратная; лицо строгое, без кокетства, волосы убраны — ничего лишнего; в её комнате репродукции Боттичелли и венецианские пейзажи, но сама она выглядит скорее практичной, чем мечтательной.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[3] },
+        { id: 4, name: "Анджела Уоррен", photo: "static/анджелауоррен.jpg", role: "Анджела Уоррен — правильные, немного суровые черты лица, прекрасные чёрные брови, умные карие глаза (одий слегка перекошен, не видит — но Анджела не обращает на это внимания); нежная, белая кожа, прямые плечи, немного мальчишеская походка, на правой щеке — страшный шрам.", dialogLimit: 5, msgCount: 0, finished: false, history: [], opening: openingLines[4] }
+    ];
     let evidenceMap = { 0: [], 1: [], 2: [], 3: [], 4: [] };
     let currentModal = null;
     let gameInitialized = false;
     const app = document.getElementById('appRoot');
-
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'toast-notify';
@@ -605,14 +591,12 @@ const suspects = [
         document.body.appendChild(t);
         setTimeout(() => t.remove(), 2000);
     }
-
     function closeModal() {
         if (currentModal) {
             currentModal.remove();
             currentModal = null;
         }
     }
-
     function showModal(html, className = '', addCloseCross = true) {
         if (currentModal) closeModal();
         const overlay = document.createElement('div');
@@ -632,9 +616,7 @@ const suspects = [
         }
         return modalDiv;
     }
-
-    // Кастомное подтверждение (без confirm)
-    function showCustomConfirm(message, onConfirm) {
+      function showCustomConfirm(message, onConfirm) {
         const confirmDiv = document.createElement('div');
         confirmDiv.className = 'custom-confirm';
         confirmDiv.innerHTML = `
@@ -652,7 +634,6 @@ const suspects = [
         noBtn.onclick = () => cleanup();
         // клик вне окна не закрывает, только кнопки
     }
-
     function showCharacterDescription(s) {
         showModal(`
             <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
@@ -664,7 +645,6 @@ const suspects = [
             <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
         `);
     }
-
     function makeEvidenceSelectable(container, suspectId) {
         if (!container) return;
         const aiMessages = container.querySelectorAll('.msg-ai');
@@ -696,7 +676,7 @@ const suspects = [
         }
         
         if (suspect.history.length === 0) {
-            suspect.history.push({ sender: 'ai', text: suspect.opening });
+            suspect.history.push({ sender: 'ai', text: suspect.opening }); /*начальный текст*/
         }
         const historyHtml = suspect.history.map(msg => {
             if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
@@ -704,6 +684,7 @@ const suspects = [
         }).join('');
 
         const modalDiv = showModal(`
+/*создание окна*/
             <div class="chat-header-fixed">
                 <h3>🕵️ Допрос: ${suspect.name}</h3>
                 <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
@@ -752,20 +733,67 @@ const suspects = [
             userDiv.innerText = text;
             msgContainer.appendChild(userDiv);
             
-            const reply = Reply(Name, Qestion);
-            suspect.history.push({ sender: 'ai', text: reply });
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg-ai';
-            aiDiv.innerText = reply;
-            aiDiv.addEventListener('mouseup', () => {
-                const selected = window.getSelection().toString().trim();
-                if (selected) {
-                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
-                    showToast(`Улика добавлена для ${suspect.name}`);
-                    window.getSelection().removeAllRanges();
+
+
+		/*вместо этого нейронку*/
+            fetch('/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: suspect.name, question: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showToast('Ошибка: ' + data.error);
+                    return;
                 }
+                const reply = data.answer;
+                suspect.history.push({ sender: 'ai', text: reply });
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'msg-ai';
+                aiDiv.innerText = reply;
+                // Обработчик выделения улик
+                aiDiv.addEventListener('mouseup', () => {
+                    const selected = window.getSelection().toString().trim();
+                    if (selected) {
+                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                        showToast(`Улика добавлена для ${suspect.name}`);
+                        window.getSelection().removeAllRanges();
+                    }
+                });
+                msgContainer.appendChild(aiDiv);
+                scrollToBottom();
+                makeEvidenceSelectable(msgContainer, suspect.id);
+                
+                // Проверка лимита сообщений (если нужно)
+                if (suspect.msgCount >= suspect.dialogLimit) {
+                    suspect.finished = true;
+                    closeModal();
+                    showFinishedDialog(suspect);
+                    updateMainUI();
+                    showToast(`Допрос ${suspect.name} завершён!`);
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка связи с сервером');
+                console.error(err);
             });
-            msgContainer.appendChild(aiDiv);
+                        suspect.history.push({ sender: 'ai', text: reply });
+                        const aiDiv = document.createElement('div');
+                        aiDiv.className = 'msg-ai';
+                        aiDiv.innerText = reply;
+                        aiDiv.addEventListener('mouseup', () => {
+                            const selected = window.getSelection().toString().trim();
+                            if (selected) {
+                                evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                                showToast(`Улика добавлена для ${suspect.name}`);
+                                window.getSelection().removeAllRanges();
+                            }
+                        });
+                        msgContainer.appendChild(aiDiv);
+                    /*конец замены*/
+
+
             scrollToBottom();
             makeEvidenceSelectable(msgContainer, suspect.id);
             
@@ -815,7 +843,6 @@ const suspects = [
             });
         }
     }
-    
     let evidenceWindowOpen = false;
     function openEvidenceWindow() {
         if (!gameInitialized) { showToast("Игра не начата."); return; }
@@ -887,7 +914,6 @@ const suspects = [
         };
         overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
     }
-    
     function openVerdictModal() {
         const allFinished = suspects.every(s => s.finished === true);
         if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
@@ -985,8 +1011,22 @@ const suspects = [
             card.onclick = () => openDialog(s);
             grid.appendChild(card);
         });
-        document.getElementById('rulesIconBtn').onclick = () => showModal(`<h3>📜 Правила</h3><p>Каждый подозреваемый ответит на вопросы. Выделяйте фрагменты ответов для улик. После допроса всех — кнопка приговора.</p>`,'wide-modal');
-        document.getElementById('synopsisIconBtn').onclick = () => showModal(`<h3>📖 Сюжет</h3><p>Художник Эмиас Крейл отравлен. Жена осуждена. Вы допрашиваете пятерых свидетелей. Кто убийца?</p>`);
+        document.getElementById('rulesIconBtn').onclick = () => showModal(`<h3>📜 Правила</h3><p><strong>Англия, 1938 год. Вы — Эркюль Пуаро.<br></strong> Шестнадцать лет назад в поместье Олдербери был отравлен художник Эмиас Крейл. Его жена осуждена и мертва. Но её дочь просит вас найти настоящего убийцу.<br>
+<strong>Как вести расследование:</strong><br>
+1. Перед вами пять подозреваемых. Вы можете задавать вопросы по очереди каждому из них.<br>
+2. Количество вопросов ограничено. Тратьте их с умом.<br>
+3. Если в ответе подозреваемого вы заметили улику — выделите её мышкой. Это поможет вам не упустить деталь.<br>
+4. Главное правило: вы не можете назвать убийцу, пока не опросите всех пятерых. Никаких приговоров до последнего слова.<br>
+5. Когда вопросы закончены, а все голоса выслушаны — произнесите одно имя. Это будет ваш вердикт.<br>
+Удачи, месье Пуаро. И пусть ваши серые клеточки не подведут.</p>`,'wide-modal');
+        document.getElementById('synopsisIconBtn').onclick = () => showModal(`<h3>📖 Сюжет</h3><p>Англия, 1938 год. Тихий особняк Олдербери. Шестнадцать лет назад здесь произошло убийство, которое потрясло всё графство.
+Известный художник Эмиас Крейл выпил кружку пива в своём саду — и через несколько часов был мёртв. Цикута. Яд, который не оставляет шансов.
+Следствие недолго искало убийцу. Мотив? У Эмиаса была молодая любовница, а жена, Кэролайн, открыто угрожала ему. Улики? Её отпечатки на флаконе с ядом, она сама отнесла мужу то самое пиво. Приговор — пожизненное заключение. Через год Кэролайн умерла в тюрьме.
+Казалось бы, дело закрыто. Но спустя шестнадцать лет за помощью к Эркюлю Пуаро приходит дочь убитого — Карла Лемаршан. Она показывает письмо, которое мать написала перед смертью: «Клянусь, я не убивала». Девушка просит расследовать убийство заново. Ей не нужны покой и забвение. Ей нужна правда.
+Пуаро берётся за дело, в котором нет свидетелей, нет улик и нет преступника — есть только пять человек, которые были рядом в тот роковой день.
+Пять подозреваемых. Пять версий. Пять поросят, как называла их сама Кэролайн.
+Кто из них лжёт? Кто хранит тайну шестнадцать лет? И сможет ли Пуаро доказать невиновность женщины, которую уже никто не ждёт?
+Расследование начинается. Ваш ход, месье.?</p>`);
         document.getElementById('evidenceGlobalBtn').onclick = () => openEvidenceWindow();
         
         const existing = document.querySelector('.verdict-fixed');
@@ -1040,7 +1080,7 @@ const suspects = [
         page.innerHTML = `
             <div class="page-card">
                 <h2>📜 ПРАВИЛА ИГРЫ</h2>
-                <p><strong>Англия, 1937 год. Вы — Эркюль Пуаро.</strong> Шестнадцать лет назад в поместье Олдербери был отравлен художник Эмиас Крейл. Его жена осуждена и мертва. Но её дочь просит вас найти настоящего убийцу.
+                <p><strong>Англия, 1938 год. Вы — Эркюль Пуаро.</strong> Шестнадцать лет назад в поместье Олдербери был отравлен художник Эмиас Крейл. Его жена осуждена и мертва. Но её дочь просит вас найти настоящего убийцу.
 <strong>Как вести расследование:</strong>
 1. Перед вами пять подозреваемых. Вы можете задавать вопросы по очереди каждому из них.
 2. Количество вопросов ограничено. Тратьте их с умом.

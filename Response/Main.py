@@ -18,4 +18,3 @@ def Work(Name, Question):
             
     return Ans 
     
-print(f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}", f"{Work("Elsa", "Не помните ли вы, что вы делали в тот день?")}")
