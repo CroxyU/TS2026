@@ -23,7 +23,6 @@ def ChangePerson(Name):
 
 
 def Answer(history):
-    print(history)
     response = client.chat.completions.create(
         model="groq/compound-mini",       # или "mixtral-8x7b-32768"
         messages=history,
@@ -32,7 +31,6 @@ def Answer(history):
     )
     
     answer = response.choices[0].message.content or ""
-    print(answer)
     return answer
 
 
