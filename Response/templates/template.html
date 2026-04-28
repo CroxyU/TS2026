@@ -20,39 +20,39 @@
             position: relative;
         }
         /* Стили для кнопок удаления улик */
-    .evidence-list-modal li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-        gap: 10px;
-    }
-    .delete-evidence-btn {
-        background: #7a2e2e;
-        border: none;
-        color: #faf0cf;
-        border-radius: 20px;
-        padding: 4px 12px;
-        cursor: pointer;
-        font-size: 0.7rem;
-        transition: 0.1s;
-    }
-    .delete-evidence-btn:hover {
-        background: #9e3e3e;
-    }
-    .clear-all-evidence {
-        background: #5f4a2e;
-        border: none;
-        border-radius: 40px;
-        padding: 8px 16px;
-        margin: 10px 0;
-        cursor: pointer;
-        color: #faf0cf;
-        font-weight: bold;
-        width: 100%;
-    }
-    .clear-all-evidence:hover {
-        background: #7f6139;
-    }
+        .evidence-list-modal li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .delete-evidence-btn {
+            background: #7a2e2e;
+            border: none;
+            color: #faf0cf;
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: 0.1s;
+        }
+        .delete-evidence-btn:hover {
+            background: #9e3e3e;
+        }
+        .clear-all-evidence {
+            background: #5f4a2e;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            color: #faf0cf;
+            font-weight: bold;
+            width: 100%;
+        }
+        .clear-all-evidence:hover {
+            background: #7f6139;
+        }
         .page-overlay {
             position: fixed;
             top: 0;
@@ -548,67 +548,67 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
         }
         /* Стили для викторины (блок обвинения) */
-    .quiz-modal-content {
-        text-align: left;
-    }
-    .quiz-question {
-        margin-bottom: 1.5rem;
-         padding-bottom: 0.8rem;
-       border-bottom: 1px dashed #b8860b;
-    }
-    .quiz-question p {
-        font-weight: bold;
-        color: #eedba7;
-        margin-bottom: 0.5rem;
-    }
-    .quiz-options {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-    }
-    .quiz-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        background: #0f141c;
-        padding: 6px 10px;
-        border-radius: 20px;
-    }
-    .quiz-option:hover {
-        background: #2a2f38;
-    }
-    .quiz-option input {
-        accent-color: #b8860b;
-        width: 16px;
-        height: 16px;
-    }
-    #submitQuizBtn {
-        background: #7f6139;
-        border: none;
-        border-radius: 60px;
-        padding: 10px 20px;
-        font-weight: bold;
-        color: #faf0cf;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 15px;
-    }
-    #quizResult {
-        margin-top: 15px;
-        font-size: 1.2rem;
-        text-align: center;
-        padding: 10px;
-        border-radius: 40px;
-    }
-    .quiz-win {
-        background: #1a3a1a;
-        color: #8bc34a;
-    }
-    .quiz-lose {
-        background: #3a1a1a;
-        color: #e57373;
-    }
+        .quiz-modal-content {
+            text-align: left;
+        }
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px dashed #b8860b;
+        }
+        .quiz-question p {
+            font-weight: bold;
+            color: #eedba7;
+            margin-bottom: 0.5rem;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            background: #0f141c;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+        .quiz-option:hover {
+            background: #2a2f38;
+        }
+        .quiz-option input {
+            accent-color: #b8860b;
+            width: 16px;
+            height: 16px;
+        }
+        #submitQuizBtn {
+            background: #7f6139;
+            border: none;
+            border-radius: 60px;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #faf0cf;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+        #quizResult {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 10px;
+            border-radius: 40px;
+        }
+        .quiz-win {
+            background: #1a3a1a;
+            color: #8bc34a;
+        }
+        .quiz-lose {
+            background: #3a1a1a;
+            color: #e57373;
+        }
         .fullscreen-message {
             position: fixed;
             top: 0;
@@ -689,6 +689,7 @@
     let currentModal = null;
     let gameInitialized = false;
     const app = document.getElementById('appRoot');
+    
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'toast-notify';
@@ -696,27 +697,14 @@
         document.body.appendChild(t);
         setTimeout(() => t.remove(), 2000);
     }
+    
     function closeModal() {
         if (currentModal) {
             currentModal.remove();
             currentModal = null;
         }
-    };
-        modalDiv.querySelector('#confirmVerdictBtn').onclick = () => {
-        const selected = modalDiv.querySelector('#killerSelect').value;
-        closeModal();
-        
-        // Выключаем фоновую музыку
-        const bg = document.getElementById('bgMusic');
-        if (bg) { bg.pause(); bg.currentTime = 0; }
-        
-        // Выбираем звук
-        const soundId = (selected === "Эльза Гриер") ? 'winSound' : 'loseSound';
-        const sound = document.getElementById(soundId);
-        if (sound) { sound.play().catch(e=>{}); }
-        
-        const fsDiv = document.createElement('div');
-        
+    }
+    
     function showModal(html, className = '', addCloseCross = true) {
         if (currentModal) closeModal();
         const overlay = document.createElement('div');
@@ -736,7 +724,8 @@
         }
         return modalDiv;
     }
-      function showCustomConfirm(message, onConfirm) {
+    
+    function showCustomConfirm(message, onConfirm) {
         const confirmDiv = document.createElement('div');
         confirmDiv.className = 'custom-confirm';
         confirmDiv.innerHTML = `
@@ -752,8 +741,8 @@
         const cleanup = () => confirmDiv.remove();
         yesBtn.onclick = () => { cleanup(); onConfirm(); };
         noBtn.onclick = () => cleanup();
-        // клик вне окна не закрывает, только кнопки
     }
+    
     function showCharacterDescription(s) {
         showModal(`
             <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
@@ -765,6 +754,7 @@
             <div><strong style="color:#e2cfac;">📜 Подозреваемый:</strong><br>${s.role}</div>
         `);
     }
+    
     function makeEvidenceSelectable(container, suspectId) {
         if (!container) return;
         const aiMessages = container.querySelectorAll('.msg-ai');
@@ -790,125 +780,59 @@
     }
 
     function renderChatModal(suspect) {
-    if (suspect.finished) {
-        showFinishedDialog(suspect);
-        return;
-    }
-
-    if (suspect.history.length === 0) {
-        suspect.history.push({ sender: 'ai', text: suspect.opening });
-    }
-
-    const historyHtml = suspect.history.map(msg => {
-        if (msg.sender === 'user')
-            return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
-        else
-            return `<div class="msg-ai">${escapeHtml(msg.text)}</div>`;
-    }).join('');
-
-    const modalDiv = showModal(`
-        <div class="chat-header-fixed">
-            <h3>🕵️ Допрос: ${suspect.name}</h3>
-            <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
-        </div>
-        <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
-        <div class="chat-input-row">
-            <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
-            <button id="sendMsgBtn">📩 Отправить</button>
-        </div>
-    `, 'dialog-window', false);
-
-    const inputField = modalDiv.querySelector('#chatMsgInput');
-    const sendBtn = modalDiv.querySelector('#sendMsgBtn');
-    const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
-    const finishBtn = modalDiv.querySelector('#forceFinishDialogBtn');
-
-    function scrollToBottom() {
-        msgContainer.scrollTop = msgContainer.scrollHeight;
-    }
-    scrollToBottom();
-
-    makeEvidenceSelectable(msgContainer, suspect.id);
-
-    finishBtn.onclick = () => {
-        showCustomConfirm(
-            `Вы уверены, что хотите завершить диалог с ${suspect.name}?\n\nПосле этого вы не сможете задавать ему вопросы, но сможете просмотреть историю сообщений.`,
-            () => {
-                suspect.finished = true;
-                closeModal();
-                updateMainUI();
-                showToast(`Диалог с ${suspect.name} завершён. Вы можете просмотреть историю.`);
-            }
-        );
-    };
-
-    function addUserMessage(text) {
-        if (!text.trim()) return;
-
-        if (suspect.msgCount >= suspect.dialogLimit) {
-            suspect.finished = true;
-            closeModal();
+        if (suspect.finished) {
             showFinishedDialog(suspect);
-            updateMainUI();
-            showToast(`Допрос ${suspect.name} завершён!`);
             return;
         }
 
-        suspect.history.push({ sender: 'user', text: text });
-        suspect.msgCount++;
+        if (suspect.history.length === 0) {
+            suspect.history.push({ sender: 'ai', text: suspect.opening });
+        }
 
-        const userDiv = document.createElement('div');
-        userDiv.className = 'msg-user';
-        userDiv.innerText = text;
-        msgContainer.appendChild(userDiv);
+        const historyHtml = suspect.history.map(msg => {
+            if (msg.sender === 'user')
+                return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
+            else
+                return `<div class="msg-ai">${escapeHtml(msg.text)}</div>`;
+        }).join('');
+
+        const modalDiv = showModal(`
+            <div class="chat-header-fixed">
+                <h3>🕵️ Допрос: ${suspect.name}</h3>
+                <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
+            </div>
+            <div class="chat-messages" id="chatMessagesContainer">${historyHtml}</div>
+            <div class="chat-input-row">
+                <input type="text" id="chatMsgInput" placeholder="Введите ваш вопрос..." autocomplete="off">
+                <button id="sendMsgBtn">📩 Отправить</button>
+            </div>
+        `, 'dialog-window', false);
+
+        const inputField = modalDiv.querySelector('#chatMsgInput');
+        const sendBtn = modalDiv.querySelector('#sendMsgBtn');
+        const msgContainer = modalDiv.querySelector('#chatMessagesContainer');
+        const finishBtn = modalDiv.querySelector('#forceFinishDialogBtn');
+
+        function scrollToBottom() {
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
         scrollToBottom();
+        makeEvidenceSelectable(msgContainer, suspect.id);
 
-        inputField.value = '';
-
-        // Маппинг русских имён → английские ключи для сервера
-        const nameMap = {
-            "Филип Блейк": "Fillip",
-            "Мередит Блейк": "Meredict",
-            "Эльза Гриер": "Elsa",
-            "Сесилия Уильямс": "Sesil",
-            "Анджела Уоррен": "Angela"
-        };
-        const serverName = nameMap[suspect.name];
-        if (!serverName) {
-            showToast(`Ошибка: неизвестное имя "${suspect.name}"`);
-            return;
-        }
-
-        fetch('/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: serverName, question: text })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                showToast('Ошибка: ' + data.error);
-                return;
-            }
-
-            const reply = data.answer;
-            suspect.history.push({ sender: 'ai', text: reply });
-
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg-ai';
-            aiDiv.innerText = reply;
-            aiDiv.addEventListener('mouseup', () => {
-                const selected = window.getSelection().toString().trim();
-                if (selected) {
-                    evidenceMap[suspect.id].push(`🔍 "${selected}"`);
-                    showToast(`Улика добавлена для ${suspect.name}`);
-                    window.getSelection().removeAllRanges();
+        finishBtn.onclick = () => {
+            showCustomConfirm(
+                `Вы уверены, что хотите завершить диалог с ${suspect.name}?\n\nПосле этого вы не сможете задавать ему вопросы, но сможете просмотреть историю сообщений.`,
+                () => {
+                    suspect.finished = true;
+                    closeModal();
+                    updateMainUI();
+                    showToast(`Диалог с ${suspect.name} завершён. Вы можете просмотреть историю.`);
                 }
-            });
+            );
+        };
 
-            msgContainer.appendChild(aiDiv);
-            scrollToBottom();
-            makeEvidenceSelectable(msgContainer, suspect.id);
+        function addUserMessage(text) {
+            if (!text.trim()) return;
 
             if (suspect.msgCount >= suspect.dialogLimit) {
                 suspect.finished = true;
@@ -916,26 +840,91 @@
                 showFinishedDialog(suspect);
                 updateMainUI();
                 showToast(`Допрос ${suspect.name} завершён!`);
+                return;
             }
-        })
-        .catch(err => {
-            showToast('Ошибка связи с сервером');
-            console.error(err);
-        });
-    }
 
-    sendBtn.onclick = () => {
-        const txt = inputField.value.trim();
-        if (txt) addUserMessage(txt);
-    };
+            suspect.history.push({ sender: 'user', text: text });
+            suspect.msgCount++;
 
-    inputField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
+            const userDiv = document.createElement('div');
+            userDiv.className = 'msg-user';
+            userDiv.innerText = text;
+            msgContainer.appendChild(userDiv);
+            scrollToBottom();
+
+            inputField.value = '';
+
+            // Маппинг русских имён → английские ключи для сервера
+            const nameMap = {
+                "Филип Блейк": "Fillip",
+                "Мередит Блейк": "Meredict",
+                "Эльза Гриер": "Elsa",
+                "Сесилия Уильямс": "Sesil",
+                "Анджела Уоррен": "Angela"
+            };
+            const serverName = nameMap[suspect.name];
+            if (!serverName) {
+                showToast(`Ошибка: неизвестное имя "${suspect.name}"`);
+                return;
+            }
+
+            fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: serverName, question: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showToast('Ошибка: ' + data.error);
+                    return;
+                }
+
+                const reply = data.answer;
+                suspect.history.push({ sender: 'ai', text: reply });
+
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'msg-ai';
+                aiDiv.innerText = reply;
+                aiDiv.addEventListener('mouseup', () => {
+                    const selected = window.getSelection().toString().trim();
+                    if (selected) {
+                        evidenceMap[suspect.id].push(`🔍 "${selected}"`);
+                        showToast(`Улика добавлена для ${suspect.name}`);
+                        window.getSelection().removeAllRanges();
+                    }
+                });
+
+                msgContainer.appendChild(aiDiv);
+                scrollToBottom();
+                makeEvidenceSelectable(msgContainer, suspect.id);
+
+                if (suspect.msgCount >= suspect.dialogLimit) {
+                    suspect.finished = true;
+                    closeModal();
+                    showFinishedDialog(suspect);
+                    updateMainUI();
+                    showToast(`Допрос ${suspect.name} завершён!`);
+                }
+            })
+            .catch(err => {
+                showToast('Ошибка связи с сервером');
+                console.error(err);
+            });
+        }
+
+        sendBtn.onclick = () => {
             const txt = inputField.value.trim();
             if (txt) addUserMessage(txt);
-        }
-    });
-}
+        };
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const txt = inputField.value.trim();
+                if (txt) addUserMessage(txt);
+            }
+        });
+    }
+    
     function showFinishedDialog(suspect) {
         const historyHtml = suspect.history.map(msg => {
             if (msg.sender === 'user') return `<div class="msg-user">${escapeHtml(msg.text)}</div>`;
@@ -967,153 +956,153 @@
             });
         }
     }
+    
     let evidenceWindowOpen = false;
-function openEvidenceWindow() {
-    if (!gameInitialized) { showToast("Игра не начата."); return; }
-    if (evidenceWindowOpen) return;
-    evidenceWindowOpen = true;
-    
-    let activeId = 0;
-    
-    function renderEvidenceList(suspectId) {
-        const listContainer = document.getElementById('evidenceListModal');
-        if (!listContainer) return;
-        const evs = evidenceMap[suspectId] || [];
-        if (evs.length === 0) {
-            listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
-            return;
-        }
-        const ul = document.createElement('ul');
-        ul.className = 'evidence-list-modal';
-        evs.forEach((ev, idx) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<span>${escapeHtml(ev)}</span><button class="delete-evidence-btn" data-idx="${idx}">🗑️</button>`;
-            ul.appendChild(li);
-        });
-        listContainer.innerHTML = '';
-        listContainer.appendChild(ul);
+    function openEvidenceWindow() {
+        if (!gameInitialized) { showToast("Игра не начата."); return; }
+        if (evidenceWindowOpen) return;
+        evidenceWindowOpen = true;
         
-        listContainer.querySelectorAll('.delete-evidence-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const idx = parseInt(btn.dataset.idx);
-                evidenceMap[suspectId].splice(idx, 1);
+        let activeId = 0;
+        
+        function renderEvidenceList(suspectId) {
+            const listContainer = document.getElementById('evidenceListModal');
+            if (!listContainer) return;
+            const evs = evidenceMap[suspectId] || [];
+            if (evs.length === 0) {
+                listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
+                return;
+            }
+            const ul = document.createElement('ul');
+            ul.className = 'evidence-list-modal';
+            evs.forEach((ev, idx) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${escapeHtml(ev)}</span><button class="delete-evidence-btn" data-idx="${idx}">🗑️</button>`;
+                ul.appendChild(li);
+            });
+            listContainer.innerHTML = '';
+            listContainer.appendChild(ul);
+            
+            listContainer.querySelectorAll('.delete-evidence-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(btn.dataset.idx);
+                    evidenceMap[suspectId].splice(idx, 1);
+                    renderEvidenceList(suspectId);
+                    showToast(`Улика удалена`);
+                    const clearBtn = document.getElementById('clearAllEvidenceBtn');
+                    if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
+                });
+            });
+        }
+        
+        function clearAllEvidence(suspectId) {
+            if (evidenceMap[suspectId].length === 0) {
+                showToast(`Нет улик для удаления`);
+                return;
+            }
+            showCustomConfirm(`Вы уверены, что хотите удалить ВСЕ улики для ${suspects[suspectId].name}?`, () => {
+                evidenceMap[suspectId] = [];
                 renderEvidenceList(suspectId);
-                showToast(`Улика удалена`);
+                showToast(`Все улики для ${suspects[suspectId].name} удалены`);
                 const clearBtn = document.getElementById('clearAllEvidenceBtn');
                 if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
             });
-        });
-    }
-    
-    function clearAllEvidence(suspectId) {
-        if (evidenceMap[suspectId].length === 0) {
-            showToast(`Нет улик для удаления`);
-            return;
         }
-        showCustomConfirm(`Вы уверены, что хотите удалить ВСЕ улики для ${suspects[suspectId].name}?`, () => {
-            evidenceMap[suspectId] = [];
-            renderEvidenceList(suspectId);
-            showToast(`Все улики для ${suspects[suspectId].name} удалены`);
-            const clearBtn = document.getElementById('clearAllEvidenceBtn');
-            if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
-        });
-    }
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'evidence-modal-overlay';
-    overlay.innerHTML = `
-        <div class="evidence-big-window">
-            <div class="evidence-header-bar">
-                <h3>📓 БЛОКНОТ УЛИК</h3>
-                <button class="evidence-close-btn" id="closeEvidenceBtn">✖ ЗАКРЫТЬ</button>
-            </div>
-            <div class="evidence-body-flex">
-                <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
-                <div class="evidence-paper-area">
-                    <button id="clearAllEvidenceBtn" class="clear-all-evidence">🗑️ Очистить все улики</button>
-                    <ul class="evidence-list-modal" id="evidenceListModal"></ul>
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'evidence-modal-overlay';
+        overlay.innerHTML = `
+            <div class="evidence-big-window">
+                <div class="evidence-header-bar">
+                    <h3>📓 БЛОКНОТ УЛИК</h3>
+                    <button class="evidence-close-btn" id="closeEvidenceBtn">✖ ЗАКРЫТЬ</button>
+                </div>
+                <div class="evidence-body-flex">
+                    <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
+                    <div class="evidence-paper-area">
+                        <button id="clearAllEvidenceBtn" class="clear-all-evidence">🗑️ Очистить все улики</button>
+                        <ul class="evidence-list-modal" id="evidenceListModal"></ul>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-    const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
-    suspects.forEach(s => {
-        const tab = document.createElement('div');
-        tab.className = 'evidence-tab';
-        tab.dataset.id = s.id;
-        tab.innerText = `📌 ${s.name}`;
-        tabsContainer.appendChild(tab);
-    });
-    renderEvidenceList(0);
-    let clearBtn = overlay.querySelector('#clearAllEvidenceBtn');
-    clearBtn.textContent = `🗑️ Очистить все улики (${suspects[0].name})`;
-    clearBtn.onclick = () => clearAllEvidence(activeId);
-    const tabs = overlay.querySelectorAll('.evidence-tab');
-    function setActiveTab(id) {
-        tabs.forEach(t => {
-            const tid = parseInt(t.dataset.id);
-            if (tid === id) t.classList.add('active-tab');
-            else t.classList.remove('active-tab');
+        `;
+        document.body.appendChild(overlay);
+        const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
+        suspects.forEach(s => {
+            const tab = document.createElement('div');
+            tab.className = 'evidence-tab';
+            tab.dataset.id = s.id;
+            tab.innerText = `📌 ${s.name}`;
+            tabsContainer.appendChild(tab);
         });
-        activeId = id;
-        renderEvidenceList(id);
-        clearBtn.textContent = `🗑️ Очистить все улики (${suspects[id].name})`;
-        clearBtn.onclick = () => clearAllEvidence(id);
-    }
-    tabs.forEach(tab => {
-        tab.onclick = () => {
-            const id = parseInt(tab.dataset.id);
-            setActiveTab(id);
-        };
-    });
-    setActiveTab(0);
-    overlay.querySelector('#closeEvidenceBtn').onclick = () => {
-        overlay.remove();
-        evidenceWindowOpen = false;
-    };
-    overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
-    }
-    function openVerdictModal() {
-    const allFinished = suspects.every(s => s.finished === true);
-    if (!allFinished) {
-        showToast("Допросите всех подозреваемых (каждого до конца).");
-        return;
-    }
-
-    // Массив вопросов (первый – 5 вариантов, остальные – по 4)
-    const quizQuestions = [
-        {
-            text: "Кто из перечисленных является убийцей?",
-            options: ["Филипп Блейк", "Мередит Блейк", "Эльза Гриер", "Сессилия Уильямс", "Анджела Уоррен"],
-            correct: 2
-            
-        },
-        {
-            text: "Кто является главным детективом в романе «Пять поросят»?",
-            options: ["Эркюль Пуаро", "Мисс Марпл", "Комиссар Мегрэ", "Шерлок Холмс", "Ниро Вульф"],
-            correct: 0
-            
-        },
-        {
-            text: "Как был убит Эмиас Крейл?",
-            options: ["Самоубийство", "Отравление", "Смертельное ранение ножом", "остановка сердца"],
-            correct: 1 
-        },
-        {
-            text: "Где был найден Эмиас Крейл?",
-            options: ["у себя в комнате", "На диване", "На работе", "В саду"],
-            correct: 3
-        },
-        {
-            text: "Кого защищала Кэролайн?",
-            options: ["Мисс Марпл", "Мередит Блейк", "Эльзу Гриер", "Анджелу Уоррен", "Сесилию Уильямс"],
-            correct: 3
+        renderEvidenceList(0);
+        let clearBtn = overlay.querySelector('#clearAllEvidenceBtn');
+        clearBtn.textContent = `🗑️ Очистить все улики (${suspects[0].name})`;
+        clearBtn.onclick = () => clearAllEvidence(activeId);
+        const tabs = overlay.querySelectorAll('.evidence-tab');
+        function setActiveTab(id) {
+            tabs.forEach(t => {
+                const tid = parseInt(t.dataset.id);
+                if (tid === id) t.classList.add('active-tab');
+                else t.classList.remove('active-tab');
+            });
+            activeId = id;
+            renderEvidenceList(id);
+            clearBtn.textContent = `🗑️ Очистить все улики (${suspects[id].name})`;
+            clearBtn.onclick = () => clearAllEvidence(id);
         }
-    ];
+        tabs.forEach(tab => {
+            tab.onclick = () => {
+                const id = parseInt(tab.dataset.id);
+                setActiveTab(id);
+            };
+        });
+        setActiveTab(0);
+        overlay.querySelector('#closeEvidenceBtn').onclick = () => {
+            overlay.remove();
+            evidenceWindowOpen = false;
+        };
+        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
+    }
+    
+    function openVerdictModal() {
+        const allFinished = suspects.every(s => s.finished === true);
+        if (!allFinished) {
+            showToast("Допросите всех подозреваемых (каждого до конца).");
+            return;
+        }
 
-    // Генерируем HTML викторины
+        // Массив вопросов (первый – 5 вариантов, остальные – по 4)
+        const quizQuestions = [
+            {
+                text: "Кто из перечисленных является убийцей?",
+                options: ["Филипп Блейк", "Мередит Блейк", "Эльза Гриер", "Сессилия Уильямс", "Анджела Уоррен"],
+                correct: 2
+            },
+            {
+                text: "Кто является главным детективом в романе «Пять поросят»?",
+                options: ["Эркюль Пуаро", "Мисс Марпл", "Комиссар Мегрэ", "Шерлок Холмс", "Ниро Вульф"],
+                correct: 0
+            },
+            {
+                text: "Как был убит Эмиас Крейл?",
+                options: ["Самоубийство", "Отравление", "Смертельное ранение ножом", "остановка сердца"],
+                correct: 1
+            },
+            {
+                text: "Где был найден Эмиас Крейл?",
+                options: ["у себя в комнате", "На диване", "На работе", "В саду"],
+                correct: 3
+            },
+            {
+                text: "Кого защищала Кэролайн?",
+                options: ["Мисс Марпл", "Мередит Блейк", "Эльзу Гриер", "Анджелу Уоррен", "Сесилию Уильямс"],
+                correct: 3
+            }
+        ];
+
+        // Генерируем HTML викторины
         let quizHtml = `<div class="quiz-modal-content"><h3>⚖️ ВЫНЕСЕНИЕ ПРИГОВОРА</h3>
                         <p>Ответьте на вопросы, чтобы доказать свою правоту.</p>`;
         quizQuestions.forEach((q, idx) => {
@@ -1132,8 +1121,7 @@ function openEvidenceWindow() {
                      <div id="quizResult"></div></div>`;
 
         const modalDiv = showModal(quizHtml, 'wide-modal', true);
-    
-    // Обработчик кнопки проверки
+        
         const submitBtn = modalDiv.querySelector('#submitQuizBtn');
         if (submitBtn) {
             submitBtn.onclick = () => {
@@ -1148,8 +1136,13 @@ function openEvidenceWindow() {
                 const resultDiv = modalDiv.querySelector('#quizResult');
                 if (correctCount >= 4) {
                     resultDiv.innerHTML = `<div class="quiz-win">✅ ВЫ ПОБЕДИЛИ!<br>Правильных ответов: ${correctCount} из ${total}<br>Настоящий убийца — Эльза Гриер.</div>`;
+                    // Можно добавить звук победы
+                    const winSound = document.getElementById('winSound');
+                    if (winSound) winSound.play().catch(e=>{});
                 } else {
                     resultDiv.innerHTML = `<div class="quiz-lose">❌ ВЫ ПРОИГРАЛИ.<br>Правильных ответов: ${correctCount} из ${total}<br>Попробуйте ещё раз, перезапустив игру.</div>`;
+                    const loseSound = document.getElementById('loseSound');
+                    if (loseSound) loseSound.play().catch(e=>{});
                 }
             };
         }
@@ -1219,16 +1212,15 @@ function openEvidenceWindow() {
             </div>
         `;
         document.body.appendChild(page);
-        page.querySelector('#beginBtn').onclick = () => { page.remove(); showSynopsisPage(); };
-        page.querySelector('#beginBtn').onclick = () => {  
-        // Запуск фоновой музыки
-        const bgMusic = document.getElementById('bgMusic');
-        if (bgMusic) {
-            bgMusic.volume = 0.3;
-            bgMusic.play().catch(e => console.log('Автовоспроизведение запрещено браузером'));
-        }
-        page.remove();
-        showSynopsisPage();
+        page.querySelector('#beginBtn').onclick = () => {
+            // Запуск фоновой музыки
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.volume = 0.3;
+                bgMusic.play().catch(e => console.log('Автовоспроизведение запрещено браузером'));
+            }
+            page.remove();
+            showSynopsisPage();
         };
     }
     
@@ -1278,7 +1270,6 @@ function openEvidenceWindow() {
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
     startOnboarding();
-    }
 </script>
 </body>
 </html>
