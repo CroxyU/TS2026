@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Пять поросят — детективная игра</title>
+
+
+
     <style>
         * {
             margin: 0;
@@ -19,6 +22,41 @@
             overflow: hidden;
             position: relative;
         }
+	.evidence-list-modal li {
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	    gap: 10px;
+	}
+	.delete-evidence-btn {
+ 	   background: #7a2e2e;
+ 	   border: none;
+	    color: #faf0cf;
+	    border-radius: 20px;
+	    padding: 4px 12px;
+	    cursor: pointer;
+	    font-size: 0.7rem;
+	    transition: 0.1s;
+	}
+	.delete-evidence-btn:hover {
+	    background: #9e3e3e;
+	}
+	
+	/* Кнопка очистки всех улик для текущего подозреваемого */
+	.clear-all-evidence {
+	    background: #5f4a2e;
+	    border: none;
+	    border-radius: 40px;
+	    padding: 8px 16px;
+	    margin: 10px 0;
+	    cursor: pointer;
+	    color: #faf0cf;
+	    font-weight: bold;
+	    width: 100%;
+	}
+	.clear-all-evidence:hover {
+	    background: #7f6139;
+	}
         .page-overlay {
             position: fixed;
             top: 0;
@@ -561,7 +599,6 @@
         }
     </style>
 </head>
-
 <body>
 <div id="appRoot"></div>
 <script>
@@ -632,7 +669,6 @@
         const cleanup = () => confirmDiv.remove();
         yesBtn.onclick = () => { cleanup(); onConfirm(); };
         noBtn.onclick = () => cleanup();
-        // клик вне окна не закрывает, только кнопки
     }
     function showCharacterDescription(s) {
         showModal(`
@@ -684,7 +720,6 @@
         }).join('');
 
         const modalDiv = showModal(`
-/*создание окна*/
             <div class="chat-header-fixed">
                 <h3>🕵️ Допрос: ${suspect.name}</h3>
                 <button id="forceFinishDialogBtn" class="close-dialog-btn">✖ Завершить диалог</button>
@@ -810,76 +845,114 @@
         }
     }
     let evidenceWindowOpen = false;
-    function openEvidenceWindow() {
-        if (!gameInitialized) { showToast("Игра не начата."); return; }
-        if (evidenceWindowOpen) return;
-        evidenceWindowOpen = true;
-        
-        let activeId = 0;
-        function renderEvidenceList(suspectId) {
-            const listContainer = document.getElementById('evidenceListModal');
-            if (!listContainer) return;
-            const evs = evidenceMap[suspectId] || [];
-            if (evs.length === 0) {
-                listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
-                return;
-            }
-            listContainer.innerHTML = evs.map(ev => `<li>${escapeHtml(ev)}</li>`).join('');
+
+function openEvidenceWindow() {
+    if (!gameInitialized) { showToast("Игра не начата."); return; }
+    if (evidenceWindowOpen) return;
+    evidenceWindowOpen = true;
+    
+    let activeId = 0;
+    
+    function renderEvidenceList(suspectId) {
+        const listContainer = document.getElementById('evidenceListModal');
+        if (!listContainer) return;
+        const evs = evidenceMap[suspectId] || [];
+        if (evs.length === 0) {
+            listContainer.innerHTML = '<div class="empty-evidence">🔎 Нет улик. Выделите фрагмент ответа подозреваемого в диалоге.</div>';
+            return;
         }
+        const ul = document.createElement('ul');
+        ul.className = 'evidence-list-modal';
+        evs.forEach((ev, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span>${escapeHtml(ev)}</span><button class="delete-evidence-btn" data-idx="${idx}">🗑️</button>`;
+            ul.appendChild(li);
+        });
+        listContainer.innerHTML = '';
+        listContainer.appendChild(ul);
         
-        const overlay = document.createElement('div');
-        overlay.className = 'evidence-modal-overlay';
-        overlay.innerHTML = `
-            <div class="evidence-big-window">
-                <div class="evidence-header-bar">
-                    <h3>📓 БЛОКНОТ УЛИК</h3>
-                    <button class="evidence-close-btn" id="closeEvidenceBtn">✖ ЗАКРЫТЬ</button>
-                </div>
-                <div class="evidence-body-flex">
-                    <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
-                    <div class="evidence-paper-area">
-                        <ul class="evidence-list-modal" id="evidenceListModal"></ul>
-                    </div>
+        listContainer.querySelectorAll('.delete-evidence-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.idx);
+                evidenceMap[suspectId].splice(idx, 1);
+                renderEvidenceList(suspectId);
+                showToast(`Улика удалена`);
+                const clearBtn = document.getElementById('clearAllEvidenceBtn');
+                if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
+            });
+        });
+    }
+    
+    function clearAllEvidence(suspectId) {
+        if (evidenceMap[suspectId].length === 0) {
+            showToast(`Нет улик для удаления`);
+            return;
+        }
+        showCustomConfirm(`Вы уверены, что хотите удалить ВСЕ улики для ${suspects[suspectId].name}?`, () => {
+            evidenceMap[suspectId] = [];
+            renderEvidenceList(suspectId);
+            showToast(`Все улики для ${suspects[suspectId].name} удалены`);
+            const clearBtn = document.getElementById('clearAllEvidenceBtn');
+            if (clearBtn) clearBtn.textContent = `🗑️ Очистить все улики (${suspects[activeId].name})`;
+        });
+    }
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'evidence-modal-overlay';
+    overlay.innerHTML = `
+        <div class="evidence-big-window">
+            <div class="evidence-header-bar">
+                <h3>📓 БЛОКНОТ УЛИК</h3>
+                <button class="evidence-close-btn" id="closeEvidenceBtn">✖ ЗАКРЫТЬ</button>
+            </div>
+            <div class="evidence-body-flex">
+                <div class="evidence-side-tabs" id="evidenceSideTabsModal"></div>
+                <div class="evidence-paper-area">
+                    <button id="clearAllEvidenceBtn" class="clear-all-evidence">🗑️ Очистить все улики</button>
+                    <ul class="evidence-list-modal" id="evidenceListModal"></ul>
                 </div>
             </div>
-        `;
-        document.body.appendChild(overlay);
-        
-        const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
-        suspects.forEach(s => {
-            const tab = document.createElement('div');
-            tab.className = 'evidence-tab';
-            tab.dataset.id = s.id;
-            tab.innerText = `📌 ${s.name}`;
-            tabsContainer.appendChild(tab);
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    const tabsContainer = overlay.querySelector('#evidenceSideTabsModal');
+    suspects.forEach(s => {
+        const tab = document.createElement('div');
+        tab.className = 'evidence-tab';
+        tab.dataset.id = s.id;
+        tab.innerText = `📌 ${s.name}`;
+        tabsContainer.appendChild(tab);
+    });
+    renderEvidenceList(0);
+    let clearBtn = overlay.querySelector('#clearAllEvidenceBtn');
+    clearBtn.textContent = `🗑️ Очистить все улики (${suspects[0].name})`;
+    clearBtn.onclick = () => clearAllEvidence(activeId);
+    const tabs = overlay.querySelectorAll('.evidence-tab');
+    function setActiveTab(id) {
+        tabs.forEach(t => {
+            const tid = parseInt(t.dataset.id);
+            if (tid === id) t.classList.add('active-tab');
+            else t.classList.remove('active-tab');
         });
-        
-        renderEvidenceList(0);
-        
-        const tabs = overlay.querySelectorAll('.evidence-tab');
-        function setActiveTab(id) {
-            tabs.forEach(t => {
-                const tid = parseInt(t.dataset.id);
-                if (tid === id) t.classList.add('active-tab');
-                else t.classList.remove('active-tab');
-            });
-        }
-        tabs.forEach(tab => {
-            tab.onclick = () => {
-                const id = parseInt(tab.dataset.id);
-                activeId = id;
-                renderEvidenceList(id);
-                setActiveTab(id);
-            };
-        });
-        setActiveTab(0);
-        
-        overlay.querySelector('#closeEvidenceBtn').onclick = () => {
-            overlay.remove();
-            evidenceWindowOpen = false;
-        };
-        overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
+        activeId = id;
+        renderEvidenceList(id);
+        clearBtn.textContent = `🗑️ Очистить все улики (${suspects[id].name})`;
+        clearBtn.onclick = () => clearAllEvidence(id);
     }
+    tabs.forEach(tab => {
+        tab.onclick = () => {
+            const id = parseInt(tab.dataset.id);
+            setActiveTab(id);
+        };
+    });
+    setActiveTab(0);
+    overlay.querySelector('#closeEvidenceBtn').onclick = () => {
+        overlay.remove();
+        evidenceWindowOpen = false;
+    };
+    overlay.onclick = (e) => { if (e.target === overlay) { overlay.remove(); evidenceWindowOpen = false; } };
+}
     function openVerdictModal() {
         const allFinished = suspects.every(s => s.finished === true);
         if (!allFinished) { showToast("Допросите всех подозреваемых (каждого до конца)."); return; }
