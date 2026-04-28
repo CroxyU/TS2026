@@ -16,6 +16,7 @@ def ChangePerson(Name, person):
             "Не противоречь своим предыдущим ответам. Отвечай кратко и по существу."
             "С момента совершения преступления прошло 16 лет. "
             "Из-за этого ты будешь плохо врать и скрывать"
+            "Ты не знаешь информации, которая появилась позже 1938 года."
             f"Вся информация о тебе: {f}"
             f"Ты устал от разговора на {person.Angry} из 100."
         )
@@ -35,7 +36,7 @@ def Answer(history):
     return answer
 
 
-def Fatigue(history2, person):
+def Fatigue(history2):
     
     response = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",       # или "mixtral-8x7b-32768"

@@ -891,6 +891,7 @@
                 }
 
                 const reply = data.answer;
+                suspect.angry = data.angry;
                 suspect.history.push({ sender: 'ai', text: reply });
 
                 const aiDiv = document.createElement('div');
@@ -909,7 +910,7 @@
                 scrollToBottom();
                 makeEvidenceSelectable(msgContainer, suspect.id);
 
-                if (suspect.msgCount >= suspect.dialogLimit) {
+                if (suspect >= suspect.dialogLimit) {
                     suspect.finished = true;
                     closeModal();
                     showFinishedDialog(suspect);
