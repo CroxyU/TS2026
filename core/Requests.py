@@ -32,18 +32,26 @@ def Answer(history):
     )
     
     answer = response.choices[0].message.content or ""
-    print(f"Ответ модели: {answer}")
     return answer
 
 
 def Fatigue(history2):
     
     response = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",       # или "mixtral-8x7b-32768"
-        messages= history2,    
-        temperature=1,
-        max_tokens=500
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=history2,
+        temperature=0.2,   # ниже температура → меньше болтовни
+        max_tokens=10      # число короткое, не нужно 500
     )
-    answer = response.choices[0].message.content or ""
-    print(f"Ответ модели оценки усталости: {answer}")
-    return answer
+    raw = response.choices[0].message.content.strip()
+    print(f"Ответ модели оценки усталости: {raw}")
+    
+    # Извлекаем число
+    import re
+    match = re.search(r'\d+', raw)
+    if match:
+        return int(match.group())
+    else:
+        # Fallback: если модель всё-таки выдала текст, берём среднее
+        print("⚠️ Модель не вернула число, использую fallback 20")
+        return 20
