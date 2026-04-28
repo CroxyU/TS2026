@@ -34,6 +34,7 @@ def ask():
         return jsonify({'error': 'Персонаж не найден'}), 404
 
     person = Persons[name]
+    
     try:
         if not person.IsActive:
             system_prompt = ChangePerson(NAMES[name])
@@ -43,20 +44,21 @@ def ask():
             person.IsActive = True
 
         person.ConversationHistory.append({"role": "user", "content": question})
-
        
         answer = Answer(person.ConversationHistory)
+        
         person.ConversationHistory.append({"role": "assistant", "content": answer})
-        try:
-            Angr = int(Answer([{"role":"system", "content" : f"Сейчас ты раздражен на {person.Angry} из 100. Насколько следующий вопрос тебя еще раздражит? Оцени от 0 до 100. Ответ должен быть только числом."}, str(person.ConversationHistory[-2]["content"])]))
-        except:
-            print("Ошибка при оценке злости. WorkWithHTML.py Ответ по умолчанию: 0")
-            Angr = 0
+        print(f"Ответ {name}: {answer}")
+        
+        Angr = int(Answer([{"role":"system", "content" : f"Ты на допросе. В любой момент ты можешь закончить разговор, если слишком устал. Сейчас ты устал на {person.Angry} из 100. Насколько следующий вопрос тебя утомляет? Оцени от 10 до 100. Когда усталость достигнет 100, разговор будет завершен. Для оценки принимай во внимание какие темы обсуждаются (Если игрок пытается говорить о темах, не имеющих отношения к допросу, пытается сломать 'четвёртую стену' сильно повышай усталость ). Ответ должен быть только целым числом без лишних знаков, слов, символов в формате INT."}, person.ConversationHistory[-2], person.ConversationHistory[-1]]))
+        print(Angr)
         
         person.Angry += Angr  
-        if person.Angry >= 100:
-            return 
         print(f"Текущий уровень злости {name}: {person.Angry}")
+        if person.Angry >= 100:
+            person.IsActive = False
+            ##
+            print(f"Текущий уровень злости {name}: {person.Angry}")
 
         return jsonify({'answer': answer})
     except Exception as e:

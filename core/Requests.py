@@ -24,7 +24,7 @@ def ChangePerson(Name):
 
 def Answer(history):
     response = client.chat.completions.create(
-        model="groq/compound-mini",       # или "mixtral-8x7b-32768"
+        model="meta-llama/llama-4-scout-17b-16e-instruct",       # или "mixtral-8x7b-32768"
         messages=history,
         temperature=0.8,
         max_tokens=500
