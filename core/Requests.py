@@ -31,6 +31,7 @@ def Answer(history):
     )
     
     answer = response.choices[0].message.content or ""
+    print(f"Ответ модели: {answer}")
     return answer
 
 
