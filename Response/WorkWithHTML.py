@@ -65,6 +65,16 @@ def ask():
         return jsonify({'answer': answer})
     except Exception as e:
         return jsonify({'error': f'Ошибка сервера: {str(e)}'}), 500
+@app.route('/angry', methods=['POST'])
+def angry():
+    data = request.get_json()
+    name = data.get('name')
+    if not NAMES[name]:
+        return jsonify({'error': 'Не указано имя'}), 400
+    if NAMES[name] not in Persons:
+        return jsonify({'error': 'Персонаж не найден'}), 404
 
+    person = Persons[name]
+    return jsonify({'angry': person.Angry})
 if __name__ == '__main__':
     app.run(debug=True)
