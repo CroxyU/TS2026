@@ -4,6 +4,12 @@ from core.Requests import ChangePerson, Answer
 
 app = Flask(__name__)
 CORS(app)  # разрешаем запросы с фронтенда
+NAMES = {"Филип Блейк":"Fillip", "Мередит Блейк": "Meredict", "Эльза Гриер" : "Elsa", "Сесилия Уильямс": "Sesil", "Анджела Уоррен": "Angela", "Angela":"Angela", "Sesil":"Sesil", "Elsa": "Elsa" ,"Meredict":"Meredict","Fillip":"Fillip"} 
+Persons = {"Angela" : Central(0, True, 36, "Анжела"),
+           "Meredict" : Central(0, True, 46, "Мередикт"),
+           "Sesil" : Central(0, True, 56, "Сесиль"),
+           "Fillip" : Central(0, True, 46, "Филип"),
+           "Elsa" : Central(0, True, 46, "Эльза"), }
 
 @app.route('/')
 def index():
