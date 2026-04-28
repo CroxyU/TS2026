@@ -1,4 +1,23 @@
 
+import sys
+import os
+# Добавляем путь к корневой папке TS2026
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Теперь импорты работают
+from core.Central import Central
+from core.Requests import *
+
+from flask import Flask, render_template, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('template.html')
+
+
+
 NAMES = {"Филип Блейк":"Fillip", "Мередит Блейк": "Meredict", "Эльза Гриер" : "Elsa", "Сесилия Уильямс": "Sesil", "Анджела Уоррен": "Angela", "Angela":"Angela", "Sesil":"Sesil", "Elsa": "Elsa" ,"Meredict":"Meredict","Fillip":"Fillip"} 
 Persons = {"Angela" : Central(0, True, 36, "Анжела", ["Месье Пуаро, я ждала этого дня шестнадцать лет. Спрашивайте всё, что хотите. Я устала молчать."]),
            "Meredict" : Central(0, True, 46, "Мередикт", ["О… это очень тяжело. Я до сих пор виню себя за те разговоры о цикуте. Но если моя память поможет Карле… я постараюсь. Извините, я волнуюсь."]),
