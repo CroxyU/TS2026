@@ -62,9 +62,9 @@ python Response/WorkWithHTML.py
 │   ├── Central.py         # Класс персонажа
 │   └── Requests.py        # Функции взаимодействия с Groq
 ├── Docs/                  # Файлы с описанием персонажей (*PRESS.txt)
-├── static/                # Изображения и звуки
 ├── Response/
 │   ├── WorkWithHTML.py    # Flask-приложение
+│   ├── static/  # Изображения и звуки
 │   └── templates/
 │       └── index.html  # Основной шаблон игры
 ├── requirements.txt

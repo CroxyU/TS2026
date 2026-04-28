@@ -4,12 +4,9 @@ client = Groq(
     api_key=GROQ_API_KEY
 )
 
-
 def ChangePerson(Name, person):
     with open(f"Docs/{Name} - PRESS.txt", "r", encoding="utf-8") as f:
-
         f = f.read().strip()
-
         prompt = (
             "Ты участвуешь в допросе. Отвечай от первого лица, в характере. "
             "Можешь врать, уклоняться, нервничать. Не ломай четвёртую стену. "
@@ -22,27 +19,13 @@ def ChangePerson(Name, person):
         )
     return prompt
 
-
 def Answer(history):
-    response = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",       # или "mixtral-8x7b-32768"
-        messages=history,
-        temperature=0.8,
-        max_tokens=500
-    )
-    
+    response = client.chat.completions.create(model="meta-llama/llama-4-scout-17b-16e-instruct", messages=history, temperature=0.8, max_tokens=500)
     answer = response.choices[0].message.content or ""
     return answer
 
-
 def Fatigue(history2) -> int:
-    
-    response = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
-        messages=history2,
-        temperature=0.2,  
-        max_tokens=10      
-    )
+    response = client.chat.completions.create(model="meta-llama/llama-4-scout-17b-16e-instruct", messages=history2, temperature=0.2, max_tokens=10)
     raw = response.choices[0].message.content.strip()                                                       # type: ignore
     import re
     match = re.search(r'\d+', raw)
