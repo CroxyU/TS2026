@@ -58,7 +58,7 @@ python Response/WorkWithHTML.py
 ```
 .
 ├── core/
-│   ├── config.py          # Ваш API-ключ Groq (не коммитить)
+│   ├── config.py          # Ваш API-ключ Groq 
 │   ├── Central.py         # Класс персонажа
 │   └── Requests.py        # Функции взаимодействия с Groq
 ├── Docs/                  # Файлы с описанием персонажей (*PRESS.txt)
@@ -68,6 +68,8 @@ python Response/WorkWithHTML.py
 │   └── templates/
 │       └── template.html  # Основной шаблон игры
 ├── requirements.txt
+├── .env (не комитьте)
+├── .gitignore
 └── README.md
 ```
 
