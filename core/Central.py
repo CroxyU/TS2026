@@ -10,6 +10,7 @@ class Central():
         self.IsWork = Work
         self.Age = Age
         self.Name = Name 
+        self.IsActive = False
         self.ConversationHistory = []
 
 
